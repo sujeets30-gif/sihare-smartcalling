@@ -1,706 +1,931 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CallFlow">
-<meta name="theme-color" content="#0a0e1a">
-<title>CallFlow CRM</title>
+<meta name="theme-color" content="#0d1117">
+<title>DialFlow CRM</title>
 <style>
-  :root{
-    --bg:#0a0e1a; --panel:#11172b; --panel2:#161d36; --border:#23304f;
-    --text:#e7ecff; --muted:#8a93b3; --accent:#4f6df5; --accent2:#7b93ff;
-    --green:#2bb673; --green-bg:#0f2a22; --amber:#e2a83a; --amber-bg:#2a230f;
-    --red:#e25555; --red-bg:#2a1212; --teal:#2bb6a6; --teal-bg:#0f2a28;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; padding-bottom:3rem; -webkit-tap-highlight-color:transparent;}
-  .wrap{max-width:680px; margin:0 auto; padding:1.25rem; padding-top:calc(1.25rem + env(safe-area-inset-top)); padding-bottom:calc(3rem + env(safe-area-inset-bottom));}
-  @media (max-width:430px){
-    .wrap{padding-left:.85rem; padding-right:.85rem;}
-    .row{flex-direction:column; gap:8px;}
-    .meta-row{flex-direction:column;}
-    .stats{grid-template-columns:repeat(2,1fr);}
-    .toolbar button{min-width:46%; font-size:11.5px; padding:10px 8px;}
-    .actions a, .actions button{font-size:12px; padding:11px 6px;}
-    .counterCard{flex-direction:row; align-items:center;}
-    .ring{width:62px; height:62px;}
-    .header h1{font-size:16px;}
-    input, select, textarea, button{font-size:16px;}
-    .status-btn{font-size:11px; padding:7px 9px;}
-    .bulkbar{flex-direction:column; align-items:stretch;}
-    .bulkbar select{width:100%;}
-  }
-  .header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:1.25rem;}
-  .hleft{display:flex; align-items:center; gap:12px;}
-  .logo{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;}
-  .header h1{font-size:18px; margin:0; font-weight:700;}
-  .header p{font-size:12px; color:var(--muted); margin:2px 0 0;}
-  .live{font-size:11px; color:var(--green); font-weight:700; display:flex; align-items:center; gap:4px;}
-  .dot{width:6px; height:6px; border-radius:50%; background:var(--green); display:inline-block;}
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#1f6feb; --accent2:#58a6ff;
+  --green:#2ea043; --green2:#3fb950; --green-bg:#0d2a14;
+  --amber:#d29922; --amber-bg:#2a1f00;
+  --red:#da3633; --red-bg:#2a0c0c;
+  --teal:#1d8a99; --teal-bg:#0c2226;
+  --purple:#8957e5; --purple-bg:#1a0f2e;
+  --shadow:0 2px 12px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);-webkit-tap-highlight-color:transparent;}
 
-  .counterCard{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:1rem; margin-bottom:1rem; display:flex; align-items:center; gap:1rem;}
-  .ring{width:74px; height:74px; border-radius:50%; border:5px solid var(--panel2); display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;}
-  .ring .n{font-size:15px; font-weight:700;}
-  .counterCard .mid{flex:1;}
-  .counterCard .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
-  .counterCard .setrow{display:flex; gap:6px; margin-top:6px;}
-  .counterCard .setrow input{width:70px; padding:6px 8px; font-size:13px;}
-  .counterCard .setrow button{padding:6px 12px; font-size:12px;}
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 6px;gap:8px;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1f6feb,#58a6ff);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 14px rgba(31,111,235,.4);}
+.app-name{font-size:17px;font-weight:800;letter-spacing:-.01em;}
+.contact-sub{font-size:11px;color:var(--muted);margin-top:0;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+.live-pill{font-size:11px;color:var(--green2);font-weight:700;display:flex;align-items:center;gap:5px;background:var(--green-bg);padding:5px 11px;border-radius:999px;border:1px solid rgba(62,185,80,.2);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green2);animation:livepulse 1.8s ease-in-out infinite;}
+@keyframes livepulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(62,185,80,.5);}50%{opacity:.7;box-shadow:0 0 0 4px rgba(62,185,80,0);}}
 
-  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:1.25rem;}
-  .stat{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 6px; text-align:center;}
-  .stat .n{font-size:18px; font-weight:700;}
-  .stat .l{font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
+/* COUNTER CARD */
+.wrap{max-width:520px;margin:0 auto;padding:0 10px 60px;}
+.counter-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;}
+.ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
+.ring-wrap svg{position:absolute;inset:0;}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-text .rn{font-size:12px;font-weight:800;color:var(--accent2);}
+.ring-text .rd{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:1px;}
+.counter-mid .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.counter-mid .setrow{display:flex;gap:8px;}
+.counter-mid .setrow input{width:72px;padding:7px 10px;font-size:13px;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--text);outline:none;}
+.counter-mid .setrow input:focus{border-color:var(--accent);}
+.counter-mid .setrow button{padding:7px 14px;font-size:12px;font-weight:700;background:var(--accent);color:#fff;border:none;border-radius:9px;cursor:pointer;}
 
-  .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:1rem; margin-bottom:1rem;}
-  .card h2{font-size:13px; font-weight:600; margin:0 0 4px; cursor:default;}
-  .card .sub{font-size:11.5px; color:var(--muted); margin:0 0 10px;}
-  .card.collapsible h2{cursor:pointer; display:flex; align-items:center; justify-content:space-between;}
-  .card.collapsible .chev{transition:transform .15s; font-size:11px; color:var(--muted);}
-  .card.collapsible.open .chev{transform:rotate(90deg);}
-  .collapseBody{display:none; margin-top:8px;}
-  .card.collapsible.open .collapseBody{display:block;}
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.stat-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:7px 4px;text-align:center;position:relative;overflow:hidden;}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0;}
+.stat-box:nth-child(1)::before{background:var(--accent2);}
+.stat-box:nth-child(2)::before{background:var(--amber);}
+.stat-box:nth-child(3)::before{background:var(--green2);}
+.stat-box:nth-child(4)::before{background:var(--teal);}
+.stat-box .sn{font-size:18px;font-weight:800;}
+.stat-box .sl{font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-top:1px;font-weight:600;}
 
-  input, select, textarea{width:100%; background:var(--panel2); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:10px 12px; font-size:14px; outline:none; font-family:inherit;}
-  input::placeholder, textarea::placeholder{color:var(--muted);}
-  input:focus, select:focus, textarea:focus{border-color:var(--accent);}
-  .row{display:flex; gap:8px; margin-bottom:8px;}
-  .row > *{flex:1; min-width:0;}
-  button{cursor:pointer; border:none; border-radius:8px; font-size:14px; font-weight:600; padding:10px 14px; font-family:inherit;}
-  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; width:100%;}
-  .btn-ghost{background:var(--panel2); color:var(--text); border:1px solid var(--border);}
-  .btn-sm{padding:6px 10px; font-size:12px;}
-  .btn-block{width:100%; margin-top:6px;}
+/* SECTION CARD */
+.sec-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;}
+.sec-header{padding:10px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;}
+.sec-header h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.sec-header .chev{font-size:12px;color:var(--muted);transition:transform .2s ease;}
+.sec-card.open .chev{transform:rotate(90deg);}
+.sec-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border);}
+.sec-card.open .sec-body{display:block;}
 
-  .toolbar{display:flex; gap:8px; margin-bottom:.75rem; flex-wrap:wrap;}
-  .toolbar button{flex:1; min-width:110px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12.5px;}
+/* ADD CUSTOMER FORM */
+.add-form{padding:10px 12px;}
+.add-form h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--text);padding:9px 11px;font-size:13.5px;outline:none;font-family:inherit;transition:border-color .15s;}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,111,235,.15);}
+textarea{resize:vertical;}
+.mb8{margin-bottom:7px;}
 
-  .bulkbar{display:flex; gap:8px; align-items:center; margin-bottom:.75rem; flex-wrap:wrap;}
-  .bulkbar select{flex:1; min-width:120px;}
-  .bulkbar label{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted); white-space:nowrap;}
+/* BUTTONS */
+button{cursor:pointer;border:none;font-family:inherit;transition:filter .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
+button:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;width:100%;border-radius:10px;padding:11px;font-size:14px;font-weight:700;box-shadow:0 4px 12px rgba(31,111,235,.3);margin-top:6px;}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-ghost{background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;}
+.btn-ghost:hover{border-color:var(--muted);}
+.btn-sm{padding:7px 12px;font-size:12px;}
+.btn-block{width:100%;}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;}
 
-  .filters{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:1rem;}
-  .chip{background:var(--panel2); border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600;}
-  .chip.active{background:var(--accent); color:#fff; border-color:transparent;}
-  .chip.due.active{background:var(--amber); color:#2a230f;}
+/* TOOLBAR */
+.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
+.toolbar button{padding:10px 8px;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;}
+.toolbar .btn-full{grid-column:1/-1;}
+.toolbar-hint{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5;}
 
-  .turbo{background:linear-gradient(135deg,rgba(79,109,245,.14),rgba(123,147,255,.05)); border:1px solid var(--accent); border-radius:14px; padding:14px; margin-bottom:1rem; display:flex; align-items:center; gap:12px; cursor:pointer;}
-  .turbo .ic{width:38px; height:38px; border-radius:10px; background:var(--accent); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
-  .turbo .t{font-weight:700; font-size:14px;}
-  .turbo .s{font-size:11.5px; color:var(--muted);}
-  .turbo .arrow{margin-left:auto; color:var(--accent2);}
+/* BULK BAR */
+.bulk-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap;}
+.bulk-row label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;}
+.bulk-row label input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+#selCount{font-size:12px;color:var(--muted);}
+.filter-selects{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
+.filter-selects select{padding:8px 10px;font-size:12.5px;}
 
-  .contact{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px;}
-  .c-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:8px;}
-  .c-left{display:flex; gap:10px; align-items:flex-start;}
-  .c-name{font-size:15px; font-weight:700;}
-  .c-phone{font-size:12px; color:var(--muted); margin-top:2px;}
-  .badge{font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap;}
-  .badge.pending{background:var(--amber-bg); color:var(--amber);}
-  .badge.done{background:var(--green-bg); color:var(--green);}
-  .badge.interested{background:var(--teal-bg); color:var(--teal);}
-  .badge.not_interested{background:var(--red-bg); color:var(--red);}
-  .badge.later{background:var(--panel2); color:var(--muted);}
-  .badge.no_answer{background:var(--panel2); color:var(--muted);}
-  .del{background:transparent; border:1px solid var(--border); color:var(--red); padding:6px 8px; border-radius:8px; font-size:11px;}
+/* TURBO CARD */
+.turbo-card{background:linear-gradient(135deg,rgba(31,111,235,.12),rgba(88,166,255,.06));border:1px solid rgba(88,166,255,.3);border-radius:12px;padding:11px 13px;margin-bottom:9px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:box-shadow .15s,transform .1s;}
+.turbo-card:active{transform:scale(.99);}
+.turbo-card:hover{box-shadow:0 6px 20px rgba(31,111,235,.25);}
+.turbo-icon{width:36px;height:36px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(31,111,235,.45);}
+.turbo-title{font-size:14px;font-weight:800;}
+.turbo-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.turbo-arrow{margin-left:auto;color:var(--accent2);font-size:18px;transition:transform .15s;}
+.turbo-card:hover .turbo-arrow{transform:translateX(3px);}
 
-  .meta-row{display:flex; gap:8px; margin-bottom:10px;}
-  .meta-row select{font-size:12.5px; padding:8px 10px;}
+/* FILTER CHIPS */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px;}
+.chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.chip:active{transform:scale(.96);}
+.chip.active{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(31,111,235,.4);}
+.chip.due.active{background:var(--amber);color:#1a1200;}
 
-  .actions{display:flex; gap:8px; margin-bottom:8px;}
-  .actions a, .actions button{flex:1; text-align:center; text-decoration:none; padding:9px; border-radius:8px; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:5px;}
-  .a-call,.a-wa{background:var(--green-bg); color:var(--green);}
-  .a-sms{background:rgba(79,109,245,.12); color:var(--accent2);}
-  .a-bank{background:var(--amber-bg); color:var(--amber); width:100%; margin-bottom:8px;}
-  .a-note{background:var(--panel2); color:var(--muted); width:100%; margin-bottom:8px; border:1px solid var(--border);}
+/* SEARCH */
+.search-wrap{margin-bottom:10px;}
+.search-wrap input{padding:12px 16px 12px 42px;font-size:14px;border-radius:12px;}
+.search-wrap{position:relative;}
+.search-wrap::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;z-index:1;}
 
-  .status-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
-  .status-btn{background:var(--panel2); border:1px solid var(--border); color:var(--muted); font-size:11px; padding:6px 10px; border-radius:7px; font-weight:600;}
-  .status-btn.active{background:var(--accent); color:#fff; border-color:transparent;}
+/* ── CONTACT CARD (reference UI match) ── */
+.contact-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px;margin-bottom:8px;transition:border-color .2s;}
+.contact-card:hover{border-color:#444c56;}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:7px;gap:8px;}
+.cc-check-name{display:flex;align-items:center;gap:10px;}
+.cc-check-name input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:var(--accent);cursor:pointer;}
+.cc-name{font-size:15px;font-weight:800;letter-spacing:-.01em;}
+.cc-phone{font-size:13px;color:var(--muted);margin-top:2px;font-weight:600;letter-spacing:.02em;}
+/* STATUS BADGE */
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;margin-top:4px;text-transform:capitalize;letter-spacing:.02em;}
+.badge.pending{background:var(--amber-bg);color:var(--amber);}
+.badge.done{background:var(--green-bg);color:var(--green2);}
+.badge.interested{background:var(--teal-bg);color:var(--teal);}
+.badge.not_interested{background:var(--red-bg);color:var(--red);}
+.badge.later{background:var(--panel2);color:var(--muted);}
+.badge.no_answer{background:var(--panel2);color:var(--muted);}
+/* STATE/LANG ROW */
+.cc-meta{display:flex;align-items:center;gap:6px;margin:7px 0;flex-wrap:wrap;}
+.state-display{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:6px 9px;white-space:nowrap;}
+.cc-meta select{padding:7px 10px;font-size:12.5px;border-radius:9px;flex:1;min-width:0;}
+/* ACTION BUTTONS — reference style */
+.cc-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:7px;}
+.cc-actions a,.cc-actions button{display:flex;align-items:center;justify-content:center;gap:4px;padding:9px 4px;border-radius:10px;font-size:12.5px;font-weight:700;text-decoration:none;border:none;transition:filter .12s,transform .1s;}
+.cc-actions a:active,.cc-actions button:active{transform:scale(.95);}
+.btn-call{background:var(--green);color:#fff;box-shadow:0 3px 10px rgba(46,160,67,.4);}
+.btn-wa{background:#25d366;color:#fff;box-shadow:0 3px 10px rgba(37,211,102,.35);}
+.btn-sms{background:var(--accent);color:#fff;box-shadow:0 3px 10px rgba(31,111,235,.35);}
+.btn-del{background:transparent;color:var(--red);border:1.5px solid var(--red)!important;font-size:12px;font-weight:700;}
+.btn-del:hover{background:var(--red-bg);}
+/* SECONDARY BUTTONS */
+.cc-secondary{display:flex;flex-direction:column;gap:5px;margin-bottom:7px;}
+.cc-secondary button,.cc-secondary a{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:9px;font-size:12.5px;font-weight:600;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px;transition:border-color .15s,background .15s;}
+.cc-secondary button:hover,.cc-secondary a:hover{border-color:var(--muted);background:#2d333b;}
+/* STATUS CHIPS ROW */
+.status-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px;}
+.s-chip{padding:7px 11px;border-radius:999px;font-size:12px;font-weight:600;background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;transition:all .12s;}
+.s-chip:active{transform:scale(.96);}
+.s-chip.active-pending{background:var(--accent);color:#fff;border-color:transparent;}
+.s-chip.active-done{background:var(--green);color:#fff;border-color:transparent;}
+.s-chip.active-interested{background:var(--teal);color:#fff;border-color:transparent;}
+.s-chip.active-not_interested{background:var(--red);color:#fff;border-color:transparent;}
+.s-chip.active-later{background:var(--amber);color:#1a1200;border-color:transparent;}
+.s-chip.active-no_answer{background:var(--purple);color:#fff;border-color:transparent;}
+/* NOTE BOX */
+.note-box{display:none;margin-bottom:8px;}
+.note-box.open{display:block;}
+.note-box textarea{font-size:13px;padding:10px 12px;margin-bottom:7px;}
+/* REMINDER */
+.reminder-box{display:none;margin-bottom:6px;}
+.reminder-box.open{display:block;}
+.reminder-box input{padding:9px 12px;font-size:13px;}
+/* DUE TAG */
+.due-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-bg);padding:3px 9px;border-radius:6px;margin-top:4px;}
 
-  .noteBox{display:none; margin-bottom:8px;}
-  .noteBox.open{display:block;}
-  .noteBox textarea{font-size:12.5px;}
+/* PAGINATION */
+.page-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:8px 0 4px;}
+.page-info{font-size:12px;color:var(--muted);}
+.page-btns{display:flex;gap:6px;flex-wrap:wrap;}
 
-  .reminderRow{display:none; gap:8px; margin-bottom:8px;}
-  .reminderRow.open{display:flex;}
-  .reminderRow input{font-size:12.5px;}
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);}
+.empty-state .ei{font-size:44px;margin-bottom:12px;}
+.empty-state p{font-size:14px;line-height:1.6;}
 
-  .due-tag{font-size:10.5px; color:var(--amber); margin-top:4px;}
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;background:rgba(1,4,9,.85);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--panel);border-radius:20px 20px 0 0;padding:18px 16px 28px;width:100%;max-width:520px;transform:translateY(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);max-height:90dvh;overflow-y:auto;}
+.overlay.open .modal{transform:translateY(0);}
+.modal-drag{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px;}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.modal-header h3{font-size:15px;font-weight:800;}
 
-  .bankItem, .tmplItem{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:8px;}
-  .bankItem .info{font-size:12px;}
-  .bankItem .info b{font-size:13px;}
+/* CALL MODAL */
+.cm-contact-name{font-size:22px;font-weight:800;text-align:center;margin-bottom:3px;}
+.cm-contact-phone{font-size:14px;color:var(--muted);text-align:center;margin-bottom:14px;}
+.call-timer{font-size:36px;font-weight:800;text-align:center;color:var(--green2);font-variant-numeric:tabular-nums;letter-spacing:.04em;margin-bottom:16px;}
+.cm-dial-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--green);color:#fff;border-radius:14px;padding:16px;font-size:16px;font-weight:800;margin-bottom:12px;text-decoration:none;box-shadow:0 6px 20px rgba(46,160,67,.4);transition:filter .15s,transform .1s;}
+.cm-dial-btn:active{transform:scale(.98);}
+.cm-dial-btn:hover{filter:brightness(1.08);}
+.cm-status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.cm-s-btn{padding:11px 6px;font-size:12.5px;font-weight:700;border-radius:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;transition:border-color .12s,background .12s;}
+.cm-s-btn:hover{border-color:var(--accent2);background:#21262d;}
+.cm-skip{width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;}
+.cm-note{margin-bottom:10px;}
+.cm-reminder{display:none;margin-bottom:10px;}
+.cm-reminder.show{display:block;}
 
-  .empty{text-align:center; color:var(--muted); font-size:13px; padding:3rem 1rem;}
-  #csvInput{display:none;}
+/* HISTORY */
+.hist-item{background:var(--panel2);border-radius:9px;padding:9px 11px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;}
+.hist-icon{font-size:18px;flex-shrink:0;}
+.hist-name{font-size:13.5px;font-weight:700;}
+.hist-meta{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.hist-right{margin-left:auto;flex-shrink:0;}
+.hist-empty{text-align:center;color:var(--muted);font-size:13px;padding:1.5rem 0;}
 
-  .overlay{display:none; position:fixed; inset:0; background:rgba(5,7,15,.85); z-index:50; align-items:center; justify-content:center; padding:1rem;}
-  .overlay.open{display:flex;}
-  .modal{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:1.25rem; width:100%; max-width:420px; max-height:88vh; overflow:auto;}
-  .modal h3{margin:0 0 12px; font-size:15px;}
-  .modal .close{position:absolute;}
-  .modalHeader{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
-  .modalHeader button{padding:4px 10px;}
+/* BANK/TEMPLATE ITEMS */
+.list-item{background:var(--panel2);border-radius:9px;padding:8px 11px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.list-item .li-info{font-size:13px;line-height:1.55;}
+.list-item .li-label{font-weight:700;}
 
-  .turboCount{font-size:12px; color:var(--muted); text-align:center; margin-bottom:10px;}
-  .turboCard{text-align:center;}
-  .turboCard .name{font-size:20px; font-weight:700; margin-bottom:2px;}
-  .turboCard .phone{font-size:13px; color:var(--muted); margin-bottom:14px;}
-  .turboNav{display:flex; gap:8px; margin-top:14px;}
+/* CONFIRM */
+.confirm-body{font-size:15px;font-weight:600;padding:8px 0 18px;text-align:center;line-height:1.5;}
+.confirm-actions{display:flex;gap:10px;}
+.confirm-actions button{flex:1;}
+
+/* TURBO MODAL */
+.turbo-count{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.turbo-cname{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px;}
+.turbo-cphone{font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px;}
+
+/* INFO MODAL */
+.info-body{font-size:13.5px;color:var(--muted);line-height:1.7;white-space:pre-line;}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(90vw,360px);}
+.toast{background:#2d333b;color:var(--text);padding:12px 18px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;text-align:center;pointer-events:none;border:1px solid var(--border);}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(62,185,80,.4);color:var(--green2);}
+.toast.error{border-color:rgba(218,54,51,.4);color:var(--red);}
+
+/* BULK WA BTN */
+.wa-btn{background:#25d366;color:#fff;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700;border:none;}
+.clear-sel-btn{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:600;}
+
+/* hide file input */
+#csvInput{display:none;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+@media(max-width:400px){
+  .cc-actions{grid-template-columns:1fr 1fr;gap:6px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .cm-status-grid{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 </head>
 <body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">📞</div>
+    <div>
+      <div class="app-name">DialFlow</div>
+      <div class="contact-sub" id="contactCount">0 CONTACTS</div>
+    </div>
+  </div>
+  <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+</div>
+
 <div class="wrap">
 
-  <div class="header">
-    <div class="hleft">
-      <div class="logo">&#128222;</div>
-      <div>
-        <h1>CallFlow CRM</h1>
-        <p id="contactCount">0 contacts</p>
-      </div>
-    </div>
-    <div class="live"><span class="dot"></span>LIVE</div>
-  </div>
-
-  <div class="counterCard">
-    <div class="ring"><div class="n" id="todayCount">0 / 20</div></div>
-    <div class="mid">
-      <div class="lbl">Aaj ke calls</div>
-      <div class="setrow">
-        <input id="targetInput" type="number" value="20" min="1">
-        <button class="btn-ghost btn-sm" id="setTargetBtn">Set</button>
-      </div>
+<!-- COUNTER + STATS -->
+<div class="counter-card">
+  <div class="ring-wrap">
+    <svg width="64" height="64" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="26" fill="none" stroke="#21262d" stroke-width="5"/>
+      <circle id="ringArc" cx="32" cy="32" r="26" fill="none" stroke="#58a6ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="163" stroke-dashoffset="163" transform="rotate(-90 32 32)" style="transition:stroke-dashoffset .5s ease;"/>
+    </svg>
+    <div class="ring-text">
+      <div class="rn" id="todayCount">0 / 20</div>
+      <div class="rd">calls</div>
     </div>
   </div>
+  <div class="counter-mid">
+    <div class="lbl">📞 AAJ KE CALLS</div>
+    <div class="setrow">
+      <input id="targetInput" type="number" value="20" min="1">
+      <button id="setTargetBtn">Set</button>
+    </div>
+  </div>
+</div>
 
-  <div class="stats" id="statsGrid"></div>
+<div class="stats-grid" id="statsGrid"></div>
 
-  <div class="card">
-    <h2>Naya customer jodein</h2>
-    <div class="row">
+<!-- ADD CUSTOMER -->
+<div class="sec-card open" id="addCard">
+  <div class="sec-header" onclick="toggleCard('addCard')">
+    <h3>➕ Naya customer jodein</h3>
+    <span class="chev">›</span>
+  </div>
+  <div class="sec-body">
+    <div class="row2 mb8">
       <input id="newName" placeholder="Naam">
-      <input id="newPhone" placeholder="Mobile number">
+      <input id="newPhone" placeholder="Mobile number" type="tel">
     </div>
-    <div class="row">
+    <div class="row2 mb8">
       <select id="newState"></select>
       <select id="newLang"></select>
     </div>
-    <textarea id="newNote" placeholder="Is customer ke liye WhatsApp/SMS message (optional)" rows="2"></textarea>
-    <button class="btn-primary btn-block" id="addBtn">+ Add customer</button>
+    <textarea id="newNote" placeholder="WhatsApp/SMS message (optional)" rows="2" class="mb8"></textarea>
+    <button class="btn-primary" id="addBtn">+ Add customer</button>
   </div>
-
-  <div class="card collapsible" id="bankCard">
-    <h2 onclick="toggleCard('bankCard')">&#128179; Bank accounts / UPI (payment bhejne ke liye) <span class="chev">&#8250;</span></h2>
-    <p class="sub">Apne bank account / UPI add karein. Customer ko bhejte waqt chun sakte ho kaun sa bhejna hai.</p>
-    <div class="collapseBody">
-      <div id="bankList"></div>
-      <div class="row">
-        <input id="bankLabel" placeholder="Label (jaise: HDFC, GPay)">
-      </div>
-      <div class="row">
-        <input id="bankUpi" placeholder="UPI ID">
-        <input id="bankAcc" placeholder="Account number (optional)">
-      </div>
-      <input id="bankIfsc" placeholder="IFSC (optional)" style="margin-bottom:8px;">
-      <button class="btn-ghost btn-block" id="addBankBtn">+ Account add karein</button>
-    </div>
-  </div>
-
-  <div class="card collapsible" id="tmplCard">
-    <h2 onclick="toggleCard('tmplCard')">&#128221; Language message templates <span class="chev">&#8250;</span></h2>
-    <p class="sub">Bhasha chuno, message edit karo, phir Save dabao. {name} likhoge to customer ka naam apne aap aayega.</p>
-    <div class="collapseBody">
-      <select id="tmplLang" style="margin-bottom:8px;"></select>
-      <textarea id="tmplText" placeholder="Namaste {name}, ..." rows="3" style="margin-bottom:8px;"></textarea>
-      <button class="btn-ghost btn-block" id="saveTmplBtn">&#128190; Save this language</button>
-      <div id="tmplList" style="margin-top:10px;"></div>
-    </div>
-  </div>
-
-  <div class="toolbar">
-    <button class="btn-ghost" id="importBtn">&#11014; Import CSV</button>
-    <input type="file" id="csvInput" accept=".csv">
-    <button class="btn-ghost" id="exportBtn">&#11015; Export CSV</button>
-    <button class="btn-ghost" id="clearBtn">&#128465; Clear all</button>
-  </div>
-
-  <div class="bulkbar">
-    <label><input type="checkbox" id="selectAllBox" style="width:auto;"> <span id="selCount">0 selected</span></label>
-    <select id="filterLang"></select>
-    <select id="filterState"></select>
-  </div>
-  <div class="bulkbar">
-    <button class="btn-ghost btn-sm" id="waSelectedBtn">&#128172; WhatsApp selected</button>
-    <button class="btn-ghost btn-sm" id="clearSelBtn">Clear selection</button>
-  </div>
-
-  <div class="turbo" id="turboBtn">
-    <div class="ic">&#9889;</div>
-    <div>
-      <div class="t">Turbo Calling</div>
-      <div class="s">Ek-ek customer, bina ruke</div>
-    </div>
-    <div class="arrow">&#8594;</div>
-  </div>
-
-  <div class="filters" id="filterRow"></div>
-
-  <input id="searchBox" placeholder="&#128269; Naam ya number search..." style="margin-bottom:1rem;">
-
-  <div id="contactList"></div>
-  <p class="empty" id="emptyState">No contacts yet. Add one above or import a CSV.</p>
-
 </div>
 
+<!-- BANK -->
+<div class="sec-card" id="bankCard">
+  <div class="sec-header" onclick="toggleCard('bankCard')">
+    <h3>🏦 Bank accounts / UPI</h3>
+    <span class="chev">›</span>
+  </div>
+  <div class="sec-body" style="padding-top:12px;">
+    <div id="bankList" style="margin-bottom:10px;"></div>
+    <input id="bankLabel" placeholder="Label (HDFC, GPay...)" class="mb8">
+    <div class="row2 mb8">
+      <input id="bankUpi" placeholder="UPI ID">
+      <input id="bankAcc" placeholder="Account number">
+    </div>
+    <input id="bankIfsc" placeholder="IFSC (optional)" class="mb8">
+    <button class="btn-ghost btn-block" id="addBankBtn">+ Account add karein</button>
+  </div>
+</div>
+
+<!-- TEMPLATES -->
+<div class="sec-card" id="tmplCard">
+  <div class="sec-header" onclick="toggleCard('tmplCard')">
+    <h3>💬 Language message templates</h3>
+    <span class="chev">›</span>
+  </div>
+  <div class="sec-body" style="padding-top:12px;">
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.55;">{name} likhoge to customer ka naam apne aap aayega.</p>
+    <select id="tmplLang" class="mb8"></select>
+    <textarea id="tmplText" placeholder="Namaste {name}, ..." rows="3" class="mb8"></textarea>
+    <button class="btn-ghost btn-block" id="saveTmplBtn">💾 Save template</button>
+    <div id="tmplList" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- CALL HISTORY -->
+<div class="sec-card" id="histCard">
+  <div class="sec-header" onclick="toggleCard('histCard')">
+    <h3>📋 Call History <span id="histBadge" style="font-size:11px;background:var(--accent);color:#fff;border-radius:6px;padding:2px 8px;margin-left:4px;">0</span></h3>
+    <span class="chev">›</span>
+  </div>
+  <div class="sec-body" style="padding-top:10px;">
+    <div id="histList"></div>
+  </div>
+</div>
+
+<!-- IMPORT / EXPORT -->
+<div class="toolbar">
+  <button class="btn-ghost" id="importBtn">📂 Data import<br><span style="font-size:11px;font-weight:400;">(Excel ya CSV)</span></button>
+  <button class="btn-ghost" id="exportBtn">⬇ Export CSV</button>
+  <button class="btn-ghost btn-full" id="clearBtn">🗑 Clear all</button>
+</div>
+<input type="file" id="csvInput" accept=".csv,.xlsx,.xls,.tsv,.txt">
+<p class="toolbar-hint">Apni Excel ya CSV file daalein. System khud samajh lega — naam, number, state. Email apne aap chhod dega. Column kisi bhi order me ho, koi dikkat nahi.</p>
+
+<!-- BULK SELECT + FILTERS -->
+<div class="bulk-row">
+  <label><input type="checkbox" id="selectAllBox"> Sab select</label>
+  <button class="clear-sel-btn btn-sm" id="clearSelBtn">☐ Clear</button>
+  <span id="selCount" style="font-size:12px;color:var(--muted);"></span>
+</div>
+<div class="filter-selects">
+  <select id="filterLang"></select>
+  <select id="filterState"></select>
+</div>
+<div class="bulk-row" style="margin-bottom:12px;">
+  <button class="wa-btn" id="waSelectedBtn">💬 WhatsApp selected</button>
+</div>
+
+<!-- TURBO -->
+<div class="turbo-card" id="turboBtn">
+  <div class="turbo-icon">⚡</div>
+  <div>
+    <div class="turbo-title">Turbo Calling</div>
+    <div class="turbo-sub">Ek-ek customer, bina ruke</div>
+  </div>
+  <div class="turbo-arrow">→</div>
+</div>
+
+<!-- FILTER CHIPS -->
+<div class="filter-row" id="filterRow"></div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input id="searchBox" placeholder="Naam ya number search...">
+</div>
+
+<!-- CONTACT LIST -->
+<div id="contactList"></div>
+<div class="empty-state" id="emptyState" style="display:none;">
+  <div class="ei">📋</div>
+  <p>Abhi koi contact nahi hai.<br>Upar se add karein ya CSV import karein.</p>
+</div>
+
+</div><!-- .wrap -->
+
+<!-- CALL MODAL -->
+<div class="overlay" id="callOverlay">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="cm-contact-name" id="cmName">—</div>
+    <div class="cm-contact-phone" id="cmPhone">—</div>
+    <div class="call-timer" id="callTimer">00:00</div>
+    <a class="cm-dial-btn" id="cmDialBtn" href="#">📞 Dial Karo</a>
+    <div class="cm-note mb8">
+      <textarea id="cmNote" rows="2" placeholder="Call note (optional)..."></textarea>
+    </div>
+    <div class="cm-reminder" id="cmReminder">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">📅 Follow-up date:</label>
+      <input type="date" id="cmReminderDate">
+    </div>
+    <div class="cm-status-grid">
+      <button class="cm-s-btn" data-cms="done">✅ Ho gaya</button>
+      <button class="cm-s-btn" data-cms="interested">⭐ Interested</button>
+      <button class="cm-s-btn" data-cms="not_interested">❌ Not interest</button>
+      <button class="cm-s-btn" data-cms="later">🔔 Baad mein</button>
+      <button class="cm-s-btn" data-cms="no_answer">📵 Nahi utha</button>
+      <button class="cm-s-btn" data-cms="pending">⏳ Pending</button>
+    </div>
+    <button class="cm-skip" id="cmSkip">Abhi status mat do — band karo</button>
+  </div>
+</div>
+
+<!-- TURBO MODAL -->
 <div class="overlay" id="turboOverlay">
   <div class="modal">
-    <div class="modalHeader">
-      <h3>Turbo Calling</h3>
-      <button class="btn-ghost btn-sm" id="closeTurbo">&#10005; Band</button>
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <h3>⚡ Turbo Calling</h3>
+      <button class="btn-ghost btn-sm" id="closeTurbo">✕</button>
     </div>
-    <div class="turboCount" id="turboCounter">1 of 0</div>
-    <div class="turboCard" id="turboCardBody"></div>
+    <div class="turbo-count" id="turboCounter">1 of 0</div>
+    <div id="turboCardBody"></div>
   </div>
 </div>
 
+<!-- BANK PICK MODAL -->
 <div class="overlay" id="bankPickOverlay">
   <div class="modal">
-    <div class="modalHeader">
-      <h3>&#128179; Kaun sa account bhejna hai?</h3>
-      <button class="btn-ghost btn-sm" id="closeBankPick">&#10005;</button>
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <h3>🏦 Kaun sa account bhejna hai?</h3>
+      <button class="btn-ghost btn-sm" id="closeBankPick">✕</button>
     </div>
     <div id="bankPickList"></div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-drag"></div>
+    <div class="confirm-body" id="confirmMsg"></div>
+    <div class="confirm-actions">
+      <button class="btn-ghost" id="confirmNo">Cancel</button>
+      <button class="btn-danger" id="confirmYes">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="overlay" id="infoOverlay">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <h3 id="infoTitle">Info</h3>
+      <button class="btn-ghost btn-sm" id="closeInfo">✕</button>
+    </div>
+    <div class="info-body" id="infoBody"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
-const LANGUAGES = [
-  ['hi','हिन्दी Hindi'],['en','English'],['bn','বাংলা Bengali'],['te','తెలుగు Telugu'],
-  ['mr','मराठी Marathi'],['ta','தமிழ் Tamil'],['ur','اردو Urdu'],['gu','ગુજરાતી Gujarati'],
-  ['kn','ಕನ್ನಡ Kannada'],['or','ଓଡ଼ିଆ Odia'],['pa','ਪੰਜਾਬੀ Punjabi'],['ml','മലയാളം Malayalam'],
-  ['as','অসমীয়া Assamese'],['mai','मैथिली Maithili'],['sa','संस्कृत Sanskrit'],['kok','कोंकणी Konkani'],
-  ['ne','नेपाली Nepali'],['mni','মৈতৈলোন Manipuri'],['sd','سنڌي Sindhi'],['doi','डोगरी Dogri'],
-  ['ks','کٲشُر Kashmiri'],['brx','बड़ो Bodo'],['sat','ᱥᱟᱱᱛᱟᱲᱤ Santali']
+const LANGUAGES=[
+  ['en','English'],
+  ['hi','हिन्दी Hindi'],
+  ['bn','বাংলা Bengali'],
+  ['mr','मराठी Marathi'],
+  ['te','తెలుగు Telugu'],
+  ['ta','தமிழ் Tamil'],
+  ['gu','ગુજરાતી Gujarati'],
+  ['kn','ಕನ್ನಡ Kannada'],
+  ['ml','മലയാളം Malayalam'],
+  ['or','ଓଡ଼ιΑ Odia'],
+  ['pa','ਪੰਜਾਬੀ Punjabi'],
+  ['as','অসমীয়া Assamese']
 ];
-const STATES = [
-  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana',
-  'Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur',
-  'Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
-  'Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh',
-  'Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'
-];
-const STATUSES = ['pending','done','interested','not_interested','later','no_answer'];
-const STATUS_LABEL = {pending:'Pending',done:'Ho gaya',interested:'Interested',not_interested:'Not interested',later:'Baad mein',no_answer:'Nahi utha'};
+const STATES=['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'];
+const STATUSES=['pending','done','interested','not_interested','later','no_answer'];
+const STATUS_LABEL={pending:'Pending',done:'Ho gaya',interested:'Interested',not_interested:'Not interested',later:'Baad mein',no_answer:'Nahi utha'};
+const STATUS_EMOJI={pending:'⏳',done:'✅',interested:'⭐',not_interested:'❌',later:'🔔',no_answer:'📵'};
 
-let contacts = JSON.parse(localStorage.getItem('callflow-contacts') || '[]');
-let bankAccounts = JSON.parse(localStorage.getItem('callflow-banks') || '[]');
-let templates = JSON.parse(localStorage.getItem('callflow-templates') || '{}');
-let todayState = JSON.parse(localStorage.getItem('callflow-today') || '{"date":"","count":0,"target":20}');
-let activeFilter = 'all';
-let selected = new Set();
-let turboList = [];
-let turboIdx = 0;
-let bankPickContactId = null;
+const STATE_LANG = {
+  'Andhra Pradesh':'te',
+  'Arunachal Pradesh':'en',
+  'Assam':'as',
+  'Bihar':'hi',
+  'Chhattisgarh':'hi',
+  'Goa':'en',
+  'Gujarat':'gu',
+  'Haryana':'hi',
+  'Himachal Pradesh':'hi',
+  'Jharkhand':'hi',
+  'Karnataka':'kn',
+  'Kerala':'ml',
+  'Madhya Pradesh':'hi',
+  'Maharashtra':'mr',
+  'Manipur':'en',
+  'Meghalaya':'en',
+  'Mizoram':'en',
+  'Nagaland':'en',
+  'Odisha':'or',
+  'Punjab':'pa',
+  'Rajasthan':'hi',
+  'Sikkim':'en',
+  'Tamil Nadu':'ta',
+  'Telangana':'te',
+  'Tripura':'bn',
+  'Uttar Pradesh':'hi',
+  'Uttarakhand':'hi',
+  'West Bengal':'bn',
+  'Andaman and Nicobar Islands':'hi',
+  'Chandigarh':'pa',
+  'Dadra and Nagar Haveli and Daman and Diu':'gu',
+  'Delhi':'hi',
+  'Jammu and Kashmir':'hi',
+  'Ladakh':'hi',
+  'Lakshadweep':'ml',
+  'Puducherry':'ta'
+};
 
-const todayStr = () => new Date().toISOString().slice(0,10);
-if(todayState.date !== todayStr()){ todayState = {date:todayStr(), count:0, target:todayState.target||20}; saveToday(); }
+const PAGE_SIZE=60;
+const STATE_OPTS=STATES.map(s=>`<option value="${s}">${s}</option>`).join('');
+const LANG_OPTS=LANGUAGES.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('');
+const STATUS_BTNS=STATUSES.map(s=>`<button class="status-btn" data-ss="${s}">${STATUS_LABEL[s]}</button>`).join('');
 
-function uid(){ return Math.random().toString(36).slice(2,9); }
-function digitsOnly(p){ return (p||'').replace(/\D/g,''); }
-function escapeHtml(str){ const d=document.createElement('div'); d.textContent = str==null?'':str; return d.innerHTML; }
-function save(){ localStorage.setItem('callflow-contacts', JSON.stringify(contacts)); }
-function saveBanks(){ localStorage.setItem('callflow-banks', JSON.stringify(bankAccounts)); }
-function saveTemplates(){ localStorage.setItem('callflow-templates', JSON.stringify(templates)); }
-function saveToday(){ localStorage.setItem('callflow-today', JSON.stringify(todayState)); }
+/* ── FAST LOCAL STORAGE ── */
+const _mem={};
+const _dirty={};
+let _flushTimer=null;
+function lsGet(key,fb){ if(key in _mem) return _mem[key]; try{ const r=localStorage.getItem(key); _mem[key]=r?JSON.parse(r):fb; }catch(e){ _mem[key]=fb; } return _mem[key]; }
+function lsSet(key,val){ _mem[key]=val; _dirty[key]=true; clearTimeout(_flushTimer); _flushTimer=setTimeout(()=>{ for(const k in _dirty){ try{ localStorage.setItem(k,JSON.stringify(_mem[k])); }catch(e){} } for(const k in _dirty) delete _dirty[k]; },150); }
 
-function langName(code){ const f = LANGUAGES.find(l=>l[0]===code); return f ? f[1] : code; }
+/* ── STATE ── */
+let contacts   =lsGet('callflow-contacts',[]);
+let bankAccounts=lsGet('callflow-banks',[]);
+let templates  =lsGet('callflow-templates',{});
+let todayState =lsGet('callflow-today',{date:'',count:0,target:20});
+let callHistory=lsGet('callflow-history',[]);
+let activeFilter='all';
+let selected=new Set();
+let currentPage=0;
+let filteredCache=[];
+let renderPending=false;
+let turboList=[],turboIdx=0,bankPickContactId=null;
+let searchTimer=null;
 
-function populateSelect(el, options, withAllLabel){
-  let html = withAllLabel ? `<option value="">${withAllLabel}</option>` : '';
-  html += options.map(o=>Array.isArray(o) ? `<option value="${o[0]}">${o[1]}</option>` : `<option value="${o}">${o}</option>`).join('');
-  el.innerHTML = html;
+/* call modal state */
+let cmContactId=null;
+let cmTimerStart=null;
+let cmTimerInterval=null;
+let cmSeconds=0;
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+if(todayState.date!==todayStr()){ todayState={date:todayStr(),count:0,target:todayState.target||20}; lsSet('callflow-today',todayState); }
+
+function save(){ lsSet('callflow-contacts',contacts); }
+function saveBanks(){ lsSet('callflow-banks',bankAccounts); }
+function saveTemplates(){ lsSet('callflow-templates',templates); }
+function saveToday(){ lsSet('callflow-today',todayState); }
+function saveHistory(){ lsSet('callflow-history',callHistory); }
+
+function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3); }
+function digitsOnly(p){ return String(p||'').replace(/\D/g,''); }
+function escHtml(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+function langName(code){ const f=LANGUAGES.find(l=>l[0]===code); return f?f[1]:code; }
+function isDue(c){ return c.status==='later'&&c.reminder&&c.reminder<=todayStr(); }
+function getC(id){ return contacts.find(c=>c.id===id); }
+function openLink(url){ try{ const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); }catch(e){ location.href=url; } }
+function fmtTime(sec){ const m=Math.floor(sec/60).toString().padStart(2,'0'); const s=(sec%60).toString().padStart(2,'0'); return m+':'+s; }
+function fmtDateTime(iso){ try{ const d=new Date(iso); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}); }catch(e){ return iso; } }
+
+/* ── TOAST ── */
+function showToast(msg,type,dur){ const el=document.createElement('div'); el.className='toast '+(type||'info'); el.textContent=msg; document.getElementById('toastContainer').appendChild(el); requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show'))); setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); },dur||3200); }
+
+/* ── MODALS ── */
+function confirmModal(msg){ return new Promise(res=>{ const ov=document.getElementById('confirmOverlay'); document.getElementById('confirmMsg').textContent=msg; ov.classList.add('open'); const y=document.getElementById('confirmYes'),n=document.getElementById('confirmNo'); function done(v){ ov.classList.remove('open'); y.onclick=null; n.onclick=null; res(v); } y.onclick=()=>done(true); n.onclick=()=>done(false); }); }
+function infoModal(title,body){ document.getElementById('infoTitle').textContent=title; document.getElementById('infoBody').textContent=body; document.getElementById('infoOverlay').classList.add('open'); }
+document.getElementById('closeInfo').onclick=()=>document.getElementById('infoOverlay').classList.remove('open');
+
+
+
+/* ── CALL MODAL ── */
+function openCallModal(contactId){
+  const c=getC(contactId); if(!c) return;
+  cmContactId=contactId;
+  cmSeconds=0;
+  document.getElementById('cmName').textContent=c.name;
+  document.getElementById('cmPhone').textContent=c.phone;
+  document.getElementById('cmNote').value=c.note||'';
+  document.getElementById('callTimer').textContent='00:00';
+  const dialBtn=document.getElementById('cmDialBtn');
+  dialBtn.href='tel:'+digitsOnly(c.phone);
+  const reminderRow=document.getElementById('cmReminderRow');
+  reminderRow.style.display=c.status==='later'?'block':'none';
+  document.getElementById('cmReminderDate').value=c.reminder||getTomorrow();
+  document.getElementById('callOverlay').classList.add('open');
+  /* start timer when dialer link is clicked */
+  dialBtn.onclick=function(){ startCallTimer(); todayState.count++; saveToday(); renderTodayCounter(); };
+}
+function getTomorrow(){ const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10); }
+function startCallTimer(){
+  if(cmTimerInterval) return;
+  cmTimerStart=Date.now();
+  cmTimerInterval=setInterval(()=>{ cmSeconds=Math.floor((Date.now()-cmTimerStart)/1000); document.getElementById('callTimer').textContent=fmtTime(cmSeconds); },1000);
+}
+function stopCallTimer(){ clearInterval(cmTimerInterval); cmTimerInterval=null; }
+function closeCallModal(saveStatus){
+  stopCallTimer();
+  const c=getC(cmContactId);
+  if(c && saveStatus){
+    /* update status */
+    c.status=saveStatus;
+    /* auto-set tomorrow for 'later' if no date set */
+    if(saveStatus==='later'){ c.reminder=document.getElementById('cmReminderDate').value||getTomorrow(); }
+    /* save note if typed */
+    const noteVal=document.getElementById('cmNote').value.trim();
+    if(noteVal) c.note=noteVal;
+    save();
+    /* add to history */
+    callHistory.unshift({ id:uid(), contactId:cmContactId, name:c.name, phone:c.phone, status:saveStatus, duration:cmSeconds, note:noteVal, ts:new Date().toISOString() });
+    if(callHistory.length>200) callHistory=callHistory.slice(0,200);
+    saveHistory();
+    renderHistory();
+    updateSingleCard(cmContactId);
+    renderStats();
+    showToast(c.name+' → '+STATUS_LABEL[saveStatus],'success',2000);
+  }
+  document.getElementById('callOverlay').classList.remove('open');
+  cmContactId=null; cmSeconds=0;
+}
+/* status buttons in call modal */
+document.querySelectorAll('[data-cms]').forEach(btn=>{
+  btn.onclick=()=>{
+    const s=btn.dataset.cms;
+    if(s==='later') document.getElementById('cmReminderRow').style.display='block';
+    else document.getElementById('cmReminderRow').style.display='none';
+    closeCallModal(s);
+  };
+});
+document.getElementById('cmSkip').onclick=()=>closeCallModal(null);
+/* close on backdrop click */
+document.getElementById('callOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('callOverlay')) closeCallModal(null); });
+
+/* ── CALL HISTORY ── */
+function renderHistory(){
+  const badge=document.getElementById('histBadge');
+  if(badge) badge.textContent=callHistory.length;
+  const list=document.getElementById('histList');
+  if(!list) return;
+  if(!callHistory.length){ list.innerHTML='<div class="hist-empty">Abhi koi call history nahi hai.</div>'; return; }
+  list.innerHTML=callHistory.slice(0,50).map(h=>`
+    <div class="hist-item">
+      <div class="hi-icon">${STATUS_EMOJI[h.status]||'📞'}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="hi-name">${escHtml(h.name)}</div>
+        <div class="hi-meta">${escHtml(h.phone)} · ${fmtDateTime(h.ts)} · ⏱ ${fmtTime(h.duration||0)}${h.note?'<br>📝 '+escHtml(h.note):''}</div>
+      </div>
+      <div class="hi-status"><span class="badge ${h.status}">${STATUS_LABEL[h.status]||h.status}</span></div>
+    </div>`).join('');
 }
 
-function initSelects(){
-  populateSelect(document.getElementById('newState'), STATES, '🌐 Sabhi state');
-  populateSelect(document.getElementById('newLang'), LANGUAGES, '🌐 Sabhi bhasha');
-  populateSelect(document.getElementById('tmplLang'), LANGUAGES, null);
-  populateSelect(document.getElementById('filterLang'), LANGUAGES, '🌐 Sabhi bhasha');
-  populateSelect(document.getElementById('filterState'), STATES, '📍 Sabhi state');
-  document.getElementById('newState').value = '';
-  document.getElementById('newLang').value = 'hi';
-}
-
+/* ── SELECTS ── */
+function populateSelect(el,options,allLabel){ let h=allLabel?`<option value="">${allLabel}</option>`:''; h+=options.map(o=>Array.isArray(o)?`<option value="${o[0]}">${o[1]}</option>`:`<option value="${o}">${o}</option>`).join(''); el.innerHTML=h; }
+function initSelects(){ populateSelect(document.getElementById('newState'),STATES,'🌐 Sabhi state'); populateSelect(document.getElementById('newLang'),LANGUAGES,'🌐 Sabhi bhasha'); populateSelect(document.getElementById('tmplLang'),LANGUAGES,null); populateSelect(document.getElementById('filterLang'),LANGUAGES,'🌐 Sabhi bhasha'); populateSelect(document.getElementById('filterState'),STATES,'📍 Sabhi state'); document.getElementById('newState').value=''; document.getElementById('newLang').value='hi'; }
 function toggleCard(id){ document.getElementById(id).classList.toggle('open'); }
 
-function isDue(c){
-  if(c.status !== 'later' || !c.reminder) return false;
-  return c.reminder <= todayStr();
-}
+/* ── FILTER ── */
+function getFiltered(){ const q=document.getElementById('searchBox').value.trim().toLowerCase(); const lf=document.getElementById('filterLang').value; const sf=document.getElementById('filterState').value; return contacts.filter(c=>{ if(q&&!c.name.toLowerCase().includes(q)&&!c.phone.includes(q)&&!(c.note||'').toLowerCase().includes(q)) return false; if(lf&&c.language!==lf) return false; if(sf&&c.state!==sf) return false; if(activeFilter==='due') return isDue(c); if(activeFilter!=='all') return c.status===activeFilter; return true; }); }
 
-function renderTodayCounter(){
-  document.getElementById('todayCount').textContent = todayState.count + ' / ' + todayState.target;
-  document.getElementById('targetInput').value = todayState.target;
-}
-
-function renderStats(){
-  const total = contacts.length;
-  const done = contacts.filter(c=>c.status==='done').length;
-  const pending = contacts.filter(c=>c.status==='pending').length;
-  const interested = contacts.filter(c=>c.status==='interested').length;
-  document.getElementById('contactCount').textContent = total + ' contact' + (total===1?'':'s');
-  const data = [['Total',total],['Pending',pending],['Done',done],['Interested',interested]];
-  document.getElementById('statsGrid').innerHTML = data.map(([l,v])=>`<div class="stat"><div class="n">${v}</div><div class="l">${l}</div></div>`).join('');
-}
-
-function renderFilters(){
-  const opts = [['all','Sab'],['due','Due'],['pending','Pending'],['done','Ho gaya'],['later','Baad mein'],
-    ['no_answer','Nahi utha'],['interested','Interested'],['not_interested','Not interested']];
-  document.getElementById('filterRow').innerHTML = opts.map(([k,l])=>
-    `<button class="chip ${k==='due'?'due':''} ${activeFilter===k?'active':''}" data-f="${k}">${l}</button>`).join('');
-  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{ activeFilter=b.dataset.f; render(); });
-}
-
-function getFiltered(){
-  const q = document.getElementById('searchBox').value.toLowerCase();
-  const langF = document.getElementById('filterLang').value;
-  const stateF = document.getElementById('filterState').value;
-  return contacts.filter(c=>{
-    const matchesQ = !q || c.name.toLowerCase().includes(q) || c.phone.includes(q);
-    const matchesLang = !langF || c.language===langF;
-    const matchesState = !stateF || c.state===stateF;
-    let matchesF = true;
-    if(activeFilter==='due') matchesF = isDue(c);
-    else if(activeFilter!=='all') matchesF = c.status===activeFilter;
-    return matchesQ && matchesLang && matchesState && matchesF;
-  });
-}
-
-function bankPickerHtml(contactId){
-  if(bankAccounts.length===0) return '';
-  return '';
-}
-
-function renderList(){
-  const list = getFiltered();
-  document.getElementById('emptyState').style.display = contacts.length===0 ? 'block' : 'none';
-  document.getElementById('contactList').innerHTML = list.map(c=>{
-    const num = digitsOnly(c.phone);
-    const tmpl = templates[c.language];
-    const waMsg = tmpl ? encodeURIComponent(tmpl.replace(/\{name\}/g, c.name)) : (c.note ? encodeURIComponent(c.note) : '');
-    const smsMsg = waMsg;
-    return `<div class="contact">
-      <div class="c-top">
-        <div class="c-left">
-          <input type="checkbox" class="selBox" data-id="${c.id}" ${selected.has(c.id)?'checked':''} style="width:auto; margin-top:4px;">
-          <div>
-            <div class="c-name">${escapeHtml(c.name)}</div>
-            <div class="c-phone">${escapeHtml(c.phone)}</div>
-            ${isDue(c) ? `<div class="due-tag">⏰ Follow-up due</div>` : ''}
-          </div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-          <span class="badge ${c.status}">${STATUS_LABEL[c.status]}</span>
-          <button class="del" data-del="${c.id}">Delete</button>
+/* ── CARD HTML ── */
+function cardHtml(c){
+  const num=digitsOnly(c.phone);
+  const tmpl=templates[c.language];
+  const waMsg=tmpl?encodeURIComponent(tmpl.replace(/\{name\}/g,c.name)):(c.note?encodeURIComponent(c.note):'');
+  const stateDisp=c.state?`<div class="state-display">🌐 ${escHtml(c.state)}</div>`:'';
+  return `<div class="contact-card" data-cid="${c.id}">
+    <div class="cc-top">
+      <div class="cc-check-name">
+        <input type="checkbox" class="selBox" data-cid="${c.id}" ${selected.has(c.id)?'checked':''}>
+        <div>
+          <div class="cc-name">${escHtml(c.name)}</div>
+          <div class="cc-phone">${escHtml(c.phone)}</div>
         </div>
       </div>
-      <div class="meta-row">
-        <select data-state="${c.id}">${STATES.map(s=>`<option value="${s}" ${c.state===s?'selected':''}>${s}</option>`).join('')}</select>
-        <select data-lang="${c.id}">${LANGUAGES.map(l=>`<option value="${l[0]}" ${c.language===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select>
-      </div>
-      <div class="actions">
-        <a class="a-call" data-call="${c.id}" href="tel:${num}">&#128222; Call</a>
-        <a class="a-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a>
-        <a class="a-sms" href="sms:${num}${smsMsg?'?body='+smsMsg:''}">&#9993; SMS</a>
-      </div>
-      ${bankAccounts.length ? `<button class="a-bank" data-bankpick="${c.id}">&#128179; Bank / UPI bhejo</button>` : ''}
-      <button class="a-note" data-notetoggle="${c.id}">&#128221; Note ${c.note ? '('+escapeHtml(c.note.slice(0,18))+(c.note.length>18?'...':'')+')' : 'add karein'}</button>
-      <div class="noteBox" id="noteBox-${c.id}">
-        <textarea data-noteinput="${c.id}" rows="2" placeholder="Note...">${escapeHtml(c.note||'')}</textarea>
-        <button class="btn-ghost btn-sm" data-notesave="${c.id}" style="margin-top:6px;">Save note</button>
-      </div>
-      <div class="status-row">
-        ${STATUSES.map(s=>`<button class="status-btn ${c.status===s?'active':''}" data-status="${c.id}|${s}">${STATUS_LABEL[s]}</button>`).join('')}
-      </div>
-      <div class="reminderRow ${c.status==='later'?'open':''}" id="reminder-${c.id}">
-        <input type="date" data-reminder="${c.id}" value="${c.reminder||''}">
-      </div>
-    </div>`;
-  }).join('');
-  wireListEvents();
-  document.getElementById('selCount').textContent = selected.size + ' selected';
+      <span class="badge ${c.status}">${STATUS_LABEL[c.status]}</span>
+    </div>
+    ${isDue(c)?'<div class="due-tag">⏰ Follow-up due</div>':''}
+    <div class="cc-meta">
+      ${stateDisp}
+      <select data-chlang="${c.id}" style="max-width:160px;">${LANG_OPTS}</select>
+      ${!c.state?`<select data-chstate="${c.id}" style="flex:1;"><option value="">📍 State</option>${STATE_OPTS}</select>`:''}
+    </div>
+    <div class="cc-actions">
+      <button class="btn-call" data-opencall="${c.id}">📞 Call</button>
+      <a class="btn-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank" rel="noopener">💬 WA</a>
+      <a class="btn-sms" href="sms:${num}${waMsg?'?body='+waMsg:''}">✉ SMS</a>
+      <button class="btn-del" data-del="${c.id}">Delete</button>
+    </div>
+    <div class="cc-secondary">
+      ${bankAccounts.length?`<button data-bankpick="${c.id}">🏦 Bank / UPI bhejo</button>`:''}
+      <button data-notetoggle="${c.id}">📝 Note ${c.note?'('+escHtml(c.note.slice(0,20))+(c.note.length>20?'...':'')+')':'add karein'}</button>
+    </div>
+    <div class="note-box ${c.note?'open':''}" id="nb-${c.id}">
+      <textarea data-nta="${c.id}" rows="2" placeholder="Note...">${escHtml(c.note||'')}</textarea>
+      <button class="btn-ghost btn-sm" data-nsave="${c.id}" style="margin-top:6px;width:100%;">Save note</button>
+    </div>
+    <div class="status-row">
+      ${STATUSES.map(s=>`<button class="s-chip ${c.status===s?'active-'+s:''}" data-setstatus="${c.id}|${s}">${STATUS_LABEL[s]}</button>`).join('')}
+    </div>
+    <div class="reminder-box ${c.status==='later'?'open':''}" id="rr-${c.id}">
+      <input type="date" data-reminder="${c.id}" value="${c.reminder||''}">
+    </div>
+  </div>`;
 }
 
-function wireListEvents(){
-  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
-    if(!confirm('Delete this contact?')) return;
-    contacts = contacts.filter(c=>c.id!==b.dataset.del);
-    selected.delete(b.dataset.del);
-    save(); render();
-  });
-  document.querySelectorAll('[data-status]').forEach(b=>b.onclick=()=>{
-    const [id,s] = b.dataset.status.split('|');
-    const c = contacts.find(x=>x.id===id);
-    if(c) c.status = s;
-    save(); render();
-  });
-  document.querySelectorAll('[data-state]').forEach(s=>s.onchange=()=>{
-    const c = contacts.find(x=>x.id===s.dataset.state);
-    if(c) c.state = s.value;
-    save();
-  });
-  document.querySelectorAll('[data-lang]').forEach(s=>s.onchange=()=>{
-    const c = contacts.find(x=>x.id===s.dataset.lang);
-    if(c) c.language = s.value;
-    save(); render();
-  });
-  document.querySelectorAll('[data-call]').forEach(a=>a.addEventListener('click',()=>{
-    todayState.count++; saveToday(); renderTodayCounter();
-  }));
-  document.querySelectorAll('[data-notetoggle]').forEach(b=>b.onclick=()=>{
-    document.getElementById('noteBox-'+b.dataset.notetoggle).classList.toggle('open');
-  });
-  document.querySelectorAll('[data-notesave]').forEach(b=>b.onclick=()=>{
-    const ta = document.querySelector(`[data-noteinput="${b.dataset.notesave}"]`);
-    const c = contacts.find(x=>x.id===b.dataset.notesave);
-    if(c){ c.note = ta.value.trim(); save(); render(); }
-  });
-  document.querySelectorAll('[data-reminder]').forEach(inp=>inp.onchange=()=>{
-    const c = contacts.find(x=>x.id===inp.dataset.reminder);
-    if(c){ c.reminder = inp.value; save(); render(); }
-  });
-  document.querySelectorAll('.selBox').forEach(cb=>cb.onchange=()=>{
-    if(cb.checked) selected.add(cb.dataset.id); else selected.delete(cb.dataset.id);
-    document.getElementById('selCount').textContent = selected.size + ' selected';
-  });
-  document.querySelectorAll('[data-bankpick]').forEach(b=>b.onclick=()=>openBankPick(b.dataset.bankpick));
-}
 
-function openBankPick(contactId){
-  bankPickContactId = contactId;
-  document.getElementById('bankPickList').innerHTML = bankAccounts.map(a=>
-    `<div class="bankItem">
-      <div class="info"><b>${escapeHtml(a.label)}</b><br>${a.upi?('UPI: '+escapeHtml(a.upi)+'<br>'):''}${a.acc?('A/C: '+escapeHtml(a.acc)+(a.ifsc?(' / '+escapeHtml(a.ifsc)):''))   :''}</div>
-      <button class="btn-ghost btn-sm" data-sendbank="${a.id}">Bhejo</button>
-    </div>`).join('');
-  document.querySelectorAll('[data-sendbank]').forEach(b=>b.onclick=()=>{
-    const acc = bankAccounts.find(x=>x.id===b.dataset.sendbank);
-    const c = contacts.find(x=>x.id===bankPickContactId);
-    if(!acc || !c) return;
-    let msg = `Payment details:\n${acc.label}\n`;
-    if(acc.upi) msg += `UPI ID: ${acc.upi}\n`;
-    if(acc.acc) msg += `Account: ${acc.acc}\n`;
-    if(acc.ifsc) msg += `IFSC: ${acc.ifsc}\n`;
-    const num = digitsOnly(c.phone);
-    window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
-    document.getElementById('bankPickOverlay').classList.remove('open');
-  });
-  document.getElementById('bankPickOverlay').classList.add('open');
-}
-document.getElementById('closeBankPick').onclick = ()=>document.getElementById('bankPickOverlay').classList.remove('open');
+/* ── PAGINATION ── */
+function paginationHtml(total,page){ const tp=Math.ceil(total/PAGE_SIZE); if(tp<=1) return ''; const start=page*PAGE_SIZE+1; const end=Math.min((page+1)*PAGE_SIZE,total); let btns=''; for(let i=0;i<tp;i++) btns+=`<button class="chip${i===page?' active':''}" data-pg="${i}" style="min-width:38px;">${i+1}</button>`; return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px 0 4px;"><span style="font-size:12px;color:var(--muted);">${start}–${end} / ${total} contacts</span><div style="display:flex;gap:6px;flex-wrap:wrap;">${page>0?`<button class="chip" data-pg="${page-1}" style="min-width:38px;">‹</button>`:''}${btns}${page<tp-1?`<button class="chip" data-pg="${page+1}" style="min-width:38px;">›</button>`:''}</div></div>`; }
 
-function renderBankList(){
-  document.getElementById('bankList').innerHTML = bankAccounts.map(a=>
-    `<div class="bankItem">
-      <div class="info"><b>${escapeHtml(a.label)}</b><br>${a.upi?('UPI: '+escapeHtml(a.upi)+' '):''}${a.acc?('A/C: '+escapeHtml(a.acc)):''}</div>
-      <button class="del btn-sm" data-delbank="${a.id}">Delete</button>
-    </div>`).join('');
-  document.querySelectorAll('[data-delbank]').forEach(b=>b.onclick=()=>{
-    bankAccounts = bankAccounts.filter(x=>x.id!==b.dataset.delbank);
-    saveBanks(); renderBankList(); render();
+/* ── RENDER LIST ── */
+function renderList(){ filteredCache=getFiltered(); const total=filteredCache.length; const maxPage=Math.max(0,Math.ceil(total/PAGE_SIZE)-1); if(currentPage>maxPage) currentPage=maxPage; const slice=filteredCache.slice(currentPage*PAGE_SIZE,(currentPage+1)*PAGE_SIZE); document.getElementById('emptyState').style.display=contacts.length===0?'block':'none'; const cl=document.getElementById('contactList'); cl.innerHTML=paginationHtml(total,currentPage)+slice.map(cardHtml).join('')+(total>PAGE_SIZE?paginationHtml(total,currentPage):''); slice.forEach(c=>{ const card=cl.querySelector(`[data-cid="${c.id}"]`); if(!card) return; const ss=card.querySelector(`[data-chstate="${c.id}"]`); const sl=card.querySelector(`[data-chlang="${c.id}"]`); if(ss) ss.value=c.state||''; if(sl) sl.value=c.language||'hi'; }); document.getElementById('selCount').textContent=selected.size+' selected'; cl.querySelectorAll('[data-pg]').forEach(b=>b.onclick=()=>{ currentPage=parseInt(b.dataset.pg); renderList(); cl.scrollIntoView({behavior:'smooth',block:'start'}); }); }
+
+/* ── PARTIAL CARD UPDATE ── */
+function updateSingleCard(id){ const inView=filteredCache.some(c=>c.id===id); if(!inView){ renderList(); return; } const c=getC(id); const old=document.querySelector(`[data-cid="${id}"]`); if(!c||!old){ renderList(); return; } const w=document.createElement('div'); w.innerHTML=cardHtml(c); const nc=w.firstElementChild; old.replaceWith(nc); const ss=nc.querySelector(`[data-chstate="${id}"]`); const sl=nc.querySelector(`[data-chlang="${id}"]`); if(ss) ss.value=c.state||''; if(sl) sl.value=c.language||'hi'; }
+
+/* ── EVENT DELEGATION ── */
+function bindListDelegation(){ const cl=document.getElementById('contactList');
+  cl.addEventListener('click',async e=>{
+    /* open call modal */
+    const oc=e.target.closest('[data-opencall]'); if(oc){ openCallModal(oc.dataset.opencall); return; }
+    /* delete */
+    const del=e.target.closest('[data-del]'); if(del){ const ok=await confirmModal('Is contact ko delete karna hai?'); if(!ok) return; const id=del.dataset.del; contacts=contacts.filter(c=>c.id!==id); selected.delete(id); save(); scheduleRender(); showToast('Contact delete ho gaya.','success',2000); return; }
+    /* status btn */
+    const sb=e.target.closest('[data-setstatus]'); if(sb){ const [id,s]=sb.dataset.setstatus.split('|'); const c=getC(id); if(!c) return; c.status=s; if(s==='later'&&!c.reminder) c.reminder=getTomorrow(); save(); updateSingleCard(id); renderStats(); return; }
+    /* note toggle */
+    const nt=e.target.closest('[data-notetoggle]'); if(nt){ document.getElementById('nb-'+nt.dataset.notetoggle)?.classList.toggle('open'); return; }
+    /* note save */
+    const ns=e.target.closest('[data-nsave]'); if(ns){ const id=ns.dataset.nsave; const c=getC(id); if(!c) return; const ta=cl.querySelector(`[data-nta="${id}"]`); c.note=ta?ta.value.trim():''; save(); updateSingleCard(id); showToast('Note save ho gaya.','success',1500); return; }
+    /* bank pick */
+    const bp=e.target.closest('[data-bankpick]'); if(bp){ openBankPick(bp.dataset.bankpick); return; }
+  });
+  cl.addEventListener('change',e=>{
+    const ss=e.target.closest('[data-chstate]'); if(ss){ const c=getC(ss.dataset.chstate); if(c){ c.state=ss.value; if(STATE_LANG[ss.value]) c.language=STATE_LANG[ss.value]; save(); updateSingleCard(c.id); } return; }
+    const sl=e.target.closest('[data-chlang]'); if(sl){ const c=getC(sl.dataset.chlang); if(c){ c.language=sl.value; save(); } return; }
+    const rr=e.target.closest('[data-reminder]'); if(rr){ const c=getC(rr.dataset.reminder); if(c){ c.reminder=rr.value; save(); renderStats(); } return; }
+    if(e.target.classList.contains('selBox')){ const id=e.target.dataset.cid; if(e.target.checked) selected.add(id); else selected.delete(id); document.getElementById('selCount').textContent=selected.size+' selected'; }
   });
 }
 
-document.getElementById('addBankBtn').onclick = ()=>{
-  const label = document.getElementById('bankLabel').value.trim();
-  const upi = document.getElementById('bankUpi').value.trim();
-  const acc = document.getElementById('bankAcc').value.trim();
-  const ifsc = document.getElementById('bankIfsc').value.trim();
-  if(!label || (!upi && !acc)){ alert('Label aur UPI ID ya account number daalein.'); return; }
-  bankAccounts.push({id:uid(), label, upi, acc, ifsc});
-  document.getElementById('bankLabel').value='';
-  document.getElementById('bankUpi').value='';
-  document.getElementById('bankAcc').value='';
-  document.getElementById('bankIfsc').value='';
-  saveBanks(); renderBankList(); render();
-};
+/* ── RENDER HELPERS ── */
+function renderTodayCounter(){ document.getElementById('todayCount').textContent=todayState.count+' / '+todayState.target; document.getElementById('targetInput').value=todayState.target; }
+function renderStats(){ let done=0,pend=0,inter=0; for(const c of contacts){ if(c.status==='done')done++; else if(c.status==='pending')pend++; else if(c.status==='interested')inter++; } const t=contacts.length; document.getElementById('contactCount').textContent=t+' contact'+(t===1?'':'s'); document.getElementById('statsGrid').innerHTML=[['Total',t],['Pending',pend],['Done',done],['Interested',inter]].map(([l,v])=>`<div class="stat"><div class="n">${v}</div><div class="l">${l}</div></div>`).join(''); }
+function renderFilters(){ const opts=[['all','Sab'],['due','Due'],['pending','Pending'],['done','Ho gaya'],['later','Baad mein'],['no_answer','Nahi utha'],['interested','Interested'],['not_interested','Not interested']]; document.getElementById('filterRow').innerHTML=opts.map(([k,l])=>`<button class="chip ${k==='due'?'due':''} ${activeFilter===k?'active':''}" data-f="${k}">${l}</button>`).join(''); document.getElementById('filterRow').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{ activeFilter=b.dataset.f; currentPage=0; scheduleRender(); }); }
 
-function renderTemplateList(){
-  const keys = Object.keys(templates);
-  document.getElementById('tmplList').innerHTML = keys.map(k=>
-    `<div class="tmplItem">
-      <div class="info"><b>${langName(k)}</b><br>${escapeHtml(templates[k].slice(0,40))}${templates[k].length>40?'...':''}</div>
-      <button class="del btn-sm" data-deltmpl="${k}">Delete</button>
-    </div>`).join('');
-  document.querySelectorAll('[data-deltmpl]').forEach(b=>b.onclick=()=>{
-    delete templates[b.dataset.deltmpl];
-    saveTemplates(); renderTemplateList(); render();
-  });
+function refreshFilterLang(){
+  const used = new Set(contacts.map(c=>c.language).filter(Boolean));
+  const sel = document.getElementById('filterLang');
+  const cur = sel.value;
+  let h = '<option value="">🌐 Sabhi bhasha</option>';
+  LANGUAGES.filter(l=>used.has(l[0])).forEach(l=>{ h+=`<option value="${l[0]}">${l[1]}</option>`; });
+  sel.innerHTML = h;
+  if(used.has(cur)) sel.value = cur;
 }
 
-document.getElementById('tmplLang').onchange = ()=>{
-  document.getElementById('tmplText').value = templates[document.getElementById('tmplLang').value] || '';
-};
-document.getElementById('saveTmplBtn').onclick = ()=>{
-  const lang = document.getElementById('tmplLang').value;
-  const text = document.getElementById('tmplText').value.trim();
-  if(!text){ alert('Pehle message likhein.'); return; }
-  templates[lang] = text;
-  saveTemplates(); renderTemplateList(); render();
-  alert(langName(lang) + ' ke liye template save ho gaya.');
-};
+function scheduleRender(){ if(renderPending) return; renderPending=true; requestAnimationFrame(()=>{ renderPending=false; render(); }); }
+function render(){ renderTodayCounter(); renderStats(); renderFilters(); refreshFilterLang(); renderList(); }
 
-function render(){ renderTodayCounter(); renderStats(); renderFilters(); renderList(); }
+/* ── BANK ── */
+function openBankPick(contactId){ bankPickContactId=contactId; const bl=document.getElementById('bankPickList'); bl.innerHTML=bankAccounts.map(a=>`<div class="bankItem"><div class="info"><b>${escHtml(a.label)}</b><br>${a.upi?'UPI: '+escHtml(a.upi)+'<br>':''}${a.acc?'A/C: '+escHtml(a.acc)+(a.ifsc?' / '+escHtml(a.ifsc):''):''}</div><button class="btn-ghost btn-sm" data-sbid="${a.id}">Bhejo</button></div>`).join(''); bl.querySelectorAll('[data-sbid]').forEach(b=>b.onclick=()=>{ const acc=bankAccounts.find(x=>x.id===b.dataset.sbid); const c=contacts.find(x=>x.id===bankPickContactId); if(!acc||!c) return; let msg=`Payment details:\n${acc.label}\n`; if(acc.upi) msg+=`UPI ID: ${acc.upi}\n`; if(acc.acc) msg+=`Account: ${acc.acc}\n`; if(acc.ifsc) msg+=`IFSC: ${acc.ifsc}\n`; openLink(`https://wa.me/${digitsOnly(c.phone)}?text=${encodeURIComponent(msg)}`); document.getElementById('bankPickOverlay').classList.remove('open'); showToast('Payment details WhatsApp pe bhej diye.','success',2200); }); document.getElementById('bankPickOverlay').classList.add('open'); }
+function renderBankList(){ document.getElementById('bankList').innerHTML=bankAccounts.map(a=>`<div class="bankItem"><div class="info"><b>${escHtml(a.label)}</b><br>${a.upi?'UPI: '+escHtml(a.upi)+' ':''}${a.acc?'A/C: '+escHtml(a.acc):''}</div><button class="del btn-sm" data-delbank="${a.id}">Delete</button></div>`).join(''); document.getElementById('bankList').querySelectorAll('[data-delbank]').forEach(b=>b.onclick=()=>{ bankAccounts=bankAccounts.filter(x=>x.id!==b.dataset.delbank); saveBanks(); renderBankList(); render(); }); }
+document.getElementById('addBankBtn').onclick=()=>{ const label=document.getElementById('bankLabel').value.trim(); const upi=document.getElementById('bankUpi').value.trim(); const acc=document.getElementById('bankAcc').value.trim(); const ifsc=document.getElementById('bankIfsc').value.trim(); if(!label||(!upi&&!acc)){ showToast('Label aur UPI ya account number daalein.','error'); return; } bankAccounts.push({id:uid(),label,upi,acc,ifsc}); ['bankLabel','bankUpi','bankAcc','bankIfsc'].forEach(id=>document.getElementById(id).value=''); saveBanks(); renderBankList(); render(); };
 
-document.getElementById('addBtn').onclick = ()=>{
-  const name = document.getElementById('newName').value.trim();
-  const phone = document.getElementById('newPhone').value.trim();
-  const state = document.getElementById('newState').value;
-  const language = document.getElementById('newLang').value || 'hi';
-  const note = document.getElementById('newNote').value.trim();
-  if(!name || !phone){ alert('Naam aur mobile number daalein.'); return; }
-  contacts.push({id:uid(), name, phone, state, language, note, status:'pending', reminder:''});
-  document.getElementById('newName').value = '';
-  document.getElementById('newPhone').value = '';
-  document.getElementById('newNote').value = '';
-  save(); render();
-};
+/* ── TEMPLATES ── */
+function renderTemplateList(){ const keys=Object.keys(templates); document.getElementById('tmplList').innerHTML=keys.map(k=>`<div class="tmplItem"><div class="info"><b>${langName(k)}</b><br>${escHtml(templates[k].slice(0,40))}${templates[k].length>40?'...':''}</div><button class="del btn-sm" data-deltmpl="${k}">Delete</button></div>`).join(''); document.getElementById('tmplList').querySelectorAll('[data-deltmpl]').forEach(b=>b.onclick=()=>{ delete templates[b.dataset.deltmpl]; saveTemplates(); renderTemplateList(); scheduleRender(); }); }
+document.getElementById('tmplLang').onchange=()=>{ document.getElementById('tmplText').value=templates[document.getElementById('tmplLang').value]||''; };
+document.getElementById('saveTmplBtn').onclick=()=>{ const lang=document.getElementById('tmplLang').value; const text=document.getElementById('tmplText').value.trim(); if(!text){ showToast('Pehle message likhein.','error'); return; } templates[lang]=text; saveTemplates(); renderTemplateList(); scheduleRender(); showToast(langName(lang)+' ke liye template save ho gaya.','success',2000); };
 
-document.getElementById('searchBox').oninput = render;
-document.getElementById('filterLang').onchange = render;
-document.getElementById('filterState').onchange = render;
+/* ── ADD CONTACT ── */
 
-document.getElementById('setTargetBtn').onclick = ()=>{
-  const v = parseInt(document.getElementById('targetInput').value, 10);
-  if(v > 0){ todayState.target = v; saveToday(); renderTodayCounter(); }
-};
-
-document.getElementById('selectAllBox').onchange = (e)=>{
-  const list = getFiltered();
-  if(e.target.checked) list.forEach(c=>selected.add(c.id));
-  else list.forEach(c=>selected.delete(c.id));
-  render();
-};
-document.getElementById('clearSelBtn').onclick = ()=>{ selected.clear(); render(); };
-
-document.getElementById('waSelectedBtn').onclick = ()=>{
-  const ids = Array.from(selected);
-  if(ids.length===0){ alert('Pehle customers select karein.'); return; }
-  const list = contacts.filter(c=>ids.includes(c.id));
-  turboList = list;
-  turboIdx = 0;
-  document.getElementById('turboOverlay').classList.add('open');
-  document.getElementById('turboOverlay').dataset.mode = 'wa';
-  renderTurboCard();
-};
-
-document.getElementById('turboBtn').onclick = ()=>{
-  turboList = getFiltered();
-  if(turboList.length===0){ alert('Is filter me koi customer nahi hai.'); return; }
-  turboIdx = 0;
-  document.getElementById('turboOverlay').classList.add('open');
-  document.getElementById('turboOverlay').dataset.mode = 'call';
-  renderTurboCard();
-};
-document.getElementById('closeTurbo').onclick = ()=>document.getElementById('turboOverlay').classList.remove('open');
-
-function renderTurboCard(){
-  if(turboIdx >= turboList.length){
-    document.getElementById('turboCardBody').innerHTML = `<p style="color:var(--muted); padding:1rem 0;">Sab ho gaya! &#127881;</p>`;
-    document.getElementById('turboCounter').textContent = turboList.length + ' of ' + turboList.length;
-    return;
+/* Auto language when state changes in add form */
+document.getElementById('newState').addEventListener('change', function(){
+  const st = this.value;
+  if(st && STATE_LANG[st]){
+    document.getElementById('newLang').value = STATE_LANG[st];
   }
-  const c = turboList[turboIdx];
-  const num = digitsOnly(c.phone);
-  const mode = document.getElementById('turboOverlay').dataset.mode;
-  const tmpl = templates[c.language];
-  const waMsg = tmpl ? encodeURIComponent(tmpl.replace(/\{name\}/g, c.name)) : '';
-  document.getElementById('turboCounter').textContent = (turboIdx+1) + ' of ' + turboList.length;
-  document.getElementById('turboCardBody').innerHTML = `
-    <div class="name">${escapeHtml(c.name)}</div>
-    <div class="phone">${escapeHtml(c.phone)} &middot; ${escapeHtml(c.state||'')}</div>
-    <div class="actions">
-      <a class="a-call" id="turboCallLink" href="tel:${num}">&#128222; Call</a>
-      <a class="a-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a>
-      <a class="a-sms" href="sms:${num}">&#9993; SMS</a>
-    </div>
-    <div class="status-row" style="justify-content:center;">
-      ${STATUSES.map(s=>`<button class="status-btn" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}
-    </div>
-    <div class="turboNav">
-      <button class="btn-ghost btn-block" id="turboSkip">Skip &#8594;</button>
-    </div>
-  `;
-  document.getElementById('turboCallLink').addEventListener('click', ()=>{
-    todayState.count++; saveToday(); renderTodayCounter();
-  });
-  document.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{
-    c.status = b.dataset.tstatus;
-    save();
-    turboIdx++;
-    renderTurboCard();
-    render();
-  });
-  document.getElementById('turboSkip').onclick = ()=>{ turboIdx++; renderTurboCard(); };
-}
+});
 
-document.getElementById('importBtn').onclick = ()=>document.getElementById('csvInput').click();
-document.getElementById('csvInput').onchange = (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  Papa.parse(file, {
-    header:true, skipEmptyLines:true,
-    complete: (res)=>{
-      let added = 0;
-      res.data.forEach(row=>{
-        const keys = Object.keys(row);
-        const nameKey = keys.find(k=>/name|naam/i.test(k));
-        const phoneKey = keys.find(k=>/phone|number|mobile/i.test(k));
-        const stateKey = keys.find(k=>/state/i.test(k));
-        const name = nameKey ? row[nameKey] : Object.values(row)[0];
-        const phone = phoneKey ? row[phoneKey] : Object.values(row)[1];
-        const state = stateKey ? row[stateKey] : '';
-        if(name && phone){
-          contacts.push({id:uid(), name:String(name).trim(), phone:String(phone).trim(), state:state?String(state).trim():'', language:'hi', note:'', status:'pending', reminder:''});
-          added++;
-        }
-      });
-      save(); render();
-      alert(added + ' contacts imported.');
-      e.target.value = '';
+document.getElementById('addBtn').onclick=()=>{ const name=document.getElementById('newName').value.trim(); const phone=document.getElementById('newPhone').value.trim(); if(!name||!phone){ showToast('Naam aur mobile number daalein.','error'); return; } const state=document.getElementById('newState').value; const language=document.getElementById('newLang').value||'hi'; const note=document.getElementById('newNote').value.trim(); const autoLang = language==='hi' && !map.language && state && STATE_LANG[state] ? STATE_LANG[state] : language;
+      contacts.push({id:uid(),name,phone,state,language:autoLang,note,status:'pending',reminder:''}); ['newName','newPhone','newNote'].forEach(id=>document.getElementById(id).value=''); save(); scheduleRender(); showToast('Contact add ho gaya.','success',1600); };
+
+/* ── SEARCH/FILTER ── */
+document.getElementById('searchBox').addEventListener('input',()=>{ clearTimeout(searchTimer); searchTimer=setTimeout(()=>{ currentPage=0; scheduleRender(); },120); });
+document.getElementById('filterLang').onchange=()=>{ currentPage=0; scheduleRender(); };
+document.getElementById('filterState').onchange=()=>{ currentPage=0; scheduleRender(); };
+document.getElementById('setTargetBtn').onclick=()=>{ const v=parseInt(document.getElementById('targetInput').value,10); if(v>0){ todayState.target=v; saveToday(); renderTodayCounter(); } };
+
+/* ── BULK SELECT ── */
+document.getElementById('selectAllBox').onchange=e=>{ getFiltered().forEach(c=>e.target.checked?selected.add(c.id):selected.delete(c.id)); scheduleRender(); };
+document.getElementById('clearSelBtn').onclick=()=>{ selected.clear(); scheduleRender(); };
+
+/* ── TURBO ── */
+document.getElementById('waSelectedBtn').onclick=()=>{ const ids=Array.from(selected); if(!ids.length){ showToast('Pehle customers select karein.','error'); return; } turboList=contacts.filter(c=>ids.includes(c.id)); turboIdx=0; document.getElementById('turboOverlay').classList.add('open'); document.getElementById('turboOverlay').dataset.mode='wa'; renderTurboCard(); };
+document.getElementById('turboBtn').onclick=()=>{ turboList=getFiltered(); if(!turboList.length){ showToast('Is filter me koi customer nahi hai.','error'); return; } turboIdx=0; document.getElementById('turboOverlay').classList.add('open'); document.getElementById('turboOverlay').dataset.mode='call'; renderTurboCard(); };
+document.getElementById('closeTurbo').onclick=()=>document.getElementById('turboOverlay').classList.remove('open');
+function renderTurboCard(){ if(turboIdx>=turboList.length){ document.getElementById('turboCardBody').innerHTML=`<p style="color:var(--muted);padding:1rem 0;">Sab ho gaya! 🎉</p>`; document.getElementById('turboCounter').textContent=turboList.length+' of '+turboList.length; return; } const c=turboList[turboIdx]; const num=digitsOnly(c.phone); const tmpl=templates[c.language]; const waMsg=tmpl?encodeURIComponent(tmpl.replace(/\{name\}/g,c.name)):''; document.getElementById('turboCounter').textContent=(turboIdx+1)+' of '+turboList.length; document.getElementById('turboCardBody').innerHTML=`<div class="name">${escHtml(c.name)}</div><div class="phone">${escHtml(c.phone)} · ${escHtml(c.state||'')}</div><div class="actions"><button class="a-call" onclick="openCallModal('${c.id}')">&#128222; Call</button><a class="a-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a><a class="a-sms" href="sms:${num}">&#9993; SMS</a></div><div class="status-row" style="justify-content:center;">${STATUSES.map(s=>`<button class="status-btn" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}</div><div class="turboNav"><button class="btn-ghost btn-block" id="turboSkip">Skip &#8594;</button></div>`; document.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{ c.status=b.dataset.tstatus; if(c.status==='later'&&!c.reminder) c.reminder=getTomorrow(); save(); turboIdx++; renderTurboCard(); scheduleRender(); }); document.getElementById('turboSkip').onclick=()=>{ turboIdx++; renderTurboCard(); }; }
+
+/* ── IMPORT ── */
+document.getElementById('importBtn').onclick=function(e){ e.preventDefault(); e.stopPropagation(); var inp=document.getElementById('csvInput'); inp.value=''; inp.click(); };
+document.getElementById('csvInput').onchange=function(e){ var file=e.target.files&&e.target.files[0]; if(!file) return; var ext=file.name.split('.').pop().toLowerCase(); function tryExcel(){ var r=new FileReader(); r.onload=function(ev){ try{ var data=new Uint8Array(ev.target.result); var wb=XLSX.read(data,{type:'array'}); var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''}); if(!rows.length){ showToast('Excel file khaali lag rahi hai.','error',4500); } else finishImport(rows); }catch(err){ showToast('Excel read nahi hua: '+err.message,'error',4500); } e.target.value=''; }; r.onerror=function(){ showToast('File read error.','error',4000); e.target.value=''; }; r.readAsArrayBuffer(file); } function tryCSV(delim){ Papa.parse(file,{header:true,skipEmptyLines:true,delimiter:delim,complete:function(res){ e.target.value=''; if(!res.data||!res.data.length){ showToast('CSV khaali hai.','error',4000); } else finishImport(res.data); },error:function(err){ showToast('CSV parse error: '+(err&&err.message?err.message:'Unknown'),'error',4000); e.target.value=''; }}); } if(ext==='xlsx'||ext==='xls') tryExcel(); else if(ext==='tsv') tryCSV('\t'); else tryCSV(); };
+
+/* ── EXPORT ── */
+document.getElementById('exportBtn').onclick=()=>{ if(!contacts.length){ showToast('Export ke liye koi contact nahi hai.','error'); return; } try{ const csv=Papa.unparse(contacts.map(c=>({Name:c.name,Phone:c.phone,State:c.state||'',Language:langName(c.language),Status:STATUS_LABEL[c.status],Note:c.note||''}))); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='contacts.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); showToast('CSV export ho gaya.','success',2000); }catch(err){ showToast('Export error.','error'); } };
+
+/* ── CLEAR ALL ── */
+document.getElementById('clearBtn').onclick=async()=>{ if(!contacts.length) return; const ok=await confirmModal('Saare contacts delete karne hain? Yeh wapas nahi ho sakta.'); if(!ok) return; contacts=[]; selected.clear(); save(); scheduleRender(); showToast('Saare contacts delete ho gaye.','success',2000); };
+
+/* ── IMPORT CORE ── */
+function normalizeRows(rows){ return rows.map(r=>{ const o={}; Object.keys(r).forEach(k=>{ o[k.trim()]=r[k]; }); return o; }).filter(r=>Object.values(r).some(v=>String(v||'').trim())); }
+
+/* ── SMART COLUMN MAPPING ── */
+function smartColMap(rows){
+  if(!rows.length) return {};
+  const keys = Object.keys(rows[0]);
+  const sample = rows.slice(0, Math.min(30, rows.length));
+
+  /* score each column for each field */
+  const score = {};
+  keys.forEach(k=>{
+    score[k] = {phone:0, name:0, state:0, language:0, note:0, email:0, city:0};
+    const h = k.toLowerCase().trim();
+
+    /* header keyword scoring */
+    if(/phone|mobile|mob|number|contact|whatsapp|cell|ph\.?no|ph_no|phno|tel/i.test(h))   score[k].phone   += 12;
+    if(/name|naam|customer|client|person|vyakti|contact.?name/i.test(h))                   score[k].name    += 12;
+    if(/\bstate\b|pradesh|rajya/i.test(h))                                                  score[k].state   += 12;
+    if(/city|shahar|district|dist|town|tehsil/i.test(h))                                   score[k].city    += 12;
+    if(/language|bhasha|lang|boli/i.test(h))                                               score[k].language+= 12;
+    if(/note|remark|comment|msg|message|description|detail|tippani/i.test(h))              score[k].note    += 12;
+    if(/email|mail|eMail/i.test(h))                                                        score[k].email   += 12;
+    if(/address|pata|addr/i.test(h))                                                       score[k].note    +=  6;
+
+    /* value pattern scoring */
+    let phones=0, states=0, langs=0, emails=0, texts=0, ne=0;
+    sample.forEach(r=>{
+      const v = String(r[k]||'').trim();
+      if(!v) return; ne++;
+      const d = v.replace(/\D/g,'');
+      if(d.length>=10 && d.length<=13 && d.length/v.replace(/[\s\-\+]/g,'').length > 0.7) phones++;
+      if(STATES.some(s=>s.toLowerCase()===v.toLowerCase())) states++;
+      if(LANGUAGES.some(l=>l[1].toLowerCase().includes(v.toLowerCase())||v.toLowerCase()===l[0])) langs++;
+      if(/@/.test(v) && /\.\w{2,}$/.test(v)) emails++;
+      if(isNaN(Number(v.replace(/,/g,''))) && v.length>1) texts++;
+    });
+    if(ne>0){
+      score[k].phone    += (phones/ne)*10;
+      score[k].state    += (states/ne)*11;
+      score[k].language += (langs/ne)*11;
+      score[k].email    += (emails/ne)*10;
+      score[k].name     += (texts/ne)*1.5;
     }
   });
-};
 
-document.getElementById('exportBtn').onclick = ()=>{
-  if(contacts.length===0){ alert('No contacts to export.'); return; }
-  const csv = Papa.unparse(contacts.map(c=>({Name:c.name, Phone:c.phone, State:c.state||'', Language:langName(c.language), Status:STATUS_LABEL[c.status], Note:c.note||''})));
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'contacts.csv'; a.click();
-  URL.revokeObjectURL(url);
-};
+  /* greedy assignment: pick best column per field, no re-use */
+  const fields = ['phone','email','state','language','city','name','note'];
+  const assigned = {}, used = new Set();
+  fields.forEach(f=>{
+    let best=null, bs=0;
+    keys.forEach(k=>{ if(used.has(k)) return; if(score[k][f]>bs){ bs=score[k][f]; best=k; } });
+    if(best && bs>=3){ assigned[f]=best; used.add(best); }
+  });
+  /* fallback: unassigned columns → name then note */
+  const rem = keys.filter(k=>!used.has(k));
+  if(!assigned.name && rem.length){ assigned.name=rem.shift(); used.add(assigned.name); }
+  if(!assigned.phone && rem.length){ assigned.phone=rem.shift(); used.add(assigned.phone); }
+  if(!assigned.note && rem.length){ assigned.note=rem.shift(); }
+  return assigned;
+}
 
-document.getElementById('clearBtn').onclick = ()=>{
-  if(contacts.length===0) return;
-  if(!confirm('Delete all contacts? This cannot be undone.')) return;
-  contacts = []; selected.clear();
-  save(); render();
-};
+function detectColumns(rows){
+ if(!rows.length) return {}; const keys=Object.keys(rows[0]); const sample=rows.slice(0,25); const scores={}; keys.forEach(k=>{ const h=k.toLowerCase(); const s={phone:0,name:0,state:0,language:0,note:0,email:0}; if(/phone|mobile|number|contact|whatsapp|\bmob\b/i.test(h)) s.phone+=10; if(/name|naam|customer/i.test(h)) s.name+=10; if(/state|location|city|address/i.test(h)) s.state+=10; if(/language|bhasha|lang/i.test(h)) s.language+=10; if(/note|message|remark|comment|msg/i.test(h)) s.note+=10; if(/email|mail/i.test(h)) s.email+=10; let pm=0,sm=0,lm=0,em=0,tm=0,ne=0; sample.forEach(r=>{ const v=String(r[k]||'').trim(); if(!v) return; ne++; const d=v.replace(/\D/g,''); if(d.length>=10&&d.length<=13&&d.length/v.length>.6) pm++; if(STATES.some(st=>st.toLowerCase()===v.toLowerCase())) sm++; if(LANGUAGES.some(l=>l[1].toLowerCase().includes(v.toLowerCase())||v.toLowerCase()===l[0])) lm++; if(/@/.test(v)) em++; if(isNaN(Number(v))&&v.length>1) tm++; }); if(ne){ s.phone+=(pm/ne)*8; s.state+=(sm/ne)*9; s.language+=(lm/ne)*9; s.email+=(em/ne)*9; s.name+=(tm/ne)*2; } scores[k]=s; }); const fields=['phone','email','state','language','name','note']; const assigned={},used=new Set(); fields.forEach(f=>{ let best=null,bs=0; keys.forEach(k=>{ if(used.has(k)) return; if(scores[k][f]>bs){ bs=scores[k][f]; best=k; } }); if(best&&bs>=3){ assigned[f]=best; used.add(best); } }); if(!assigned.name){ const rem=keys.filter(k=>!used.has(k)); if(rem.length){ assigned.name=rem[0]; used.add(rem[0]); } } if(!assigned.phone){ const rem=keys.filter(k=>!used.has(k)); if(rem.length){ assigned.phone=rem[0]; used.add(rem[0]); } } return assigned; }
+function matchLanguageCode(val){ const v=String(val||'').trim().toLowerCase(); const f=LANGUAGES.find(l=>l[0]===v||l[1].toLowerCase().includes(v)); return f?f[0]:null; }
+function matchStateName(val){ const v=String(val||'').trim().toLowerCase(); const f=STATES.find(s=>s.toLowerCase()===v); return f||String(val).trim(); }
+function finishImport(rawRows){ try{ const rows=normalizeRows(rawRows); if(!rows.length){ showToast('File khaali lagti hai ya format samajh nahi aaya.','error',4000); return; } const map=detectColumns(rows); let added=0,skipped=0; rows.forEach(r=>{ const name=map.name?String(r[map.name]||'').trim():''; const phone=map.phone?String(r[map.phone]||'').trim():''; if(!name||!phone){ skipped++; return; } const state=map.state?matchStateName(r[map.state]):''; const language=map.language?(matchLanguageCode(r[map.language])||'hi'):'hi'; const note=map.note?String(r[map.note]||'').trim():''; const autoLang = language==='hi' && !map.language && state && STATE_LANG[state] ? STATE_LANG[state] : language;
+      contacts.push({id:uid(),name,phone,state,language:autoLang,note,status:'pending',reminder:''}); added++; }); save(); currentPage=0; scheduleRender(); const mapped=[]; if(map.name) mapped.push('Naam → "'+map.name+'"'); if(map.phone) mapped.push('Number → "'+map.phone+'"'); if(map.state) mapped.push('State → "'+map.state+'"'); if(map.language) mapped.push('Language → "'+map.language+'"'); if(map.note) mapped.push('Note → "'+map.note+'"'); let msg=added+' contacts imported.'; if(skipped) msg+=' '+skipped+' rows skip hui (naam/number missing).'; if(mapped.length) msg+='\n\nColumns:\n'+mapped.join('\n'); if(added>0) infoModal('Import ho gaya ✅',msg); else showToast(msg,'error',4500); }catch(err){ showToast('Import error. File format check karein.','error',4500); } }
 
-initSelects();
-renderBankList();
-renderTemplateList();
-document.getElementById('tmplText').value = templates[document.getElementById('tmplLang').value] || '';
-render();
+/* ── INIT ── */
+function init(){ initSelects(); renderBankList(); renderTemplateList(); document.getElementById('tmplText').value=templates[document.getElementById('tmplLang').value]||''; bindListDelegation(); renderHistory(); render(); }
+init();
 </script>
 </body>
 </html>
