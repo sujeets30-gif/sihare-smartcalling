@@ -600,7 +600,16 @@ function saveToday(){ lsSet('callflow-today',todayState); }
 function saveHistory(){ lsSet('callflow-history',callHistory); }
 
 function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3); }
-function digitsOnly(p){ return String(p||'').replace(/\D/g,''); }
+function digitsOnly(p){
+  let n=String(p||'').trim().replace(/[\s\-\.\(\)]/g,'').replace(/[^\d+]/g,'').replace(/^\+/,'');
+  if(n.startsWith('91')&&n.length===12) return n;
+  if(n.length===10) return '91'+n;
+  if(n.length===11&&n.startsWith('0')) return '91'+n.slice(1);
+  return n;
+}
+function rawDigits(p){
+  return String(p||'').trim().replace(/[\s\-\.\(\)]/g,'').replace(/[^\d+]/g,'');
+}
 function escHtml(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 function langName(code){ const f=LANGUAGES.find(l=>l[0]===code); return f?f[1]:code; }
 function isDue(c){ return c.status==='later'&&c.reminder&&c.reminder<=todayStr(); }
@@ -629,7 +638,7 @@ function openCallModal(contactId){
   document.getElementById('cmNote').value=c.note||'';
   document.getElementById('callTimer').textContent='00:00';
   const dialBtn=document.getElementById('cmDialBtn');
-  dialBtn.href='tel:'+digitsOnly(c.phone);
+  dialBtn.href='tel:'+rawDigits(c.phone);
   const reminderRow=document.getElementById('cmReminderRow');
   reminderRow.style.display=c.status==='later'?'block':'none';
   document.getElementById('cmReminderDate').value=c.reminder||getTomorrow();
@@ -731,9 +740,9 @@ function cardHtml(c){
       ${!c.state?`<select data-chstate="${c.id}" style="flex:1;"><option value="">📍 State</option>${STATE_OPTS}</select>`:''}
     </div>
     <div class="cc-actions">
-      <button class="btn-call" data-opencall="${c.id}">📞 Call</button>
-      <a class="btn-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank" rel="noopener">💬 WA</a>
-      <a class="btn-sms" href="sms:${num}${waMsg?'?body='+waMsg:''}">✉ SMS</a>
+      <a class="btn-call" href="tel:${rawDigits(c.phone)}" onclick="openCallModal('${c.id}');return true;">📞 Call</a>
+      <a class="btn-wa" href="https://wa.me/${digitsOnly(c.phone)}${waMsg?'?text='+waMsg:''}" target="_blank" rel="noopener">💬 WA</a>
+      <a class="btn-sms" href="sms:${rawDigits(c.phone)}${waMsg?'?body='+waMsg:''}">✉ SMS</a>
       <button class="btn-del" data-del="${c.id}">Delete</button>
     </div>
     <div class="cc-secondary">
@@ -768,6 +777,7 @@ function bindListDelegation(){ const cl=document.getElementById('contactList');
   cl.addEventListener('click',async e=>{
     /* open call modal */
     const oc=e.target.closest('[data-opencall]'); if(oc){ openCallModal(oc.dataset.opencall); return; }
+    const oca=e.target.closest('a.btn-call[data-opencall]'); if(oca){ return; } /* handled by onclick */
     /* delete */
     const del=e.target.closest('[data-del]'); if(del){ const ok=await confirmModal('Is contact ko delete karna hai?'); if(!ok) return; const id=del.dataset.del; contacts=contacts.filter(c=>c.id!==id); selected.delete(id); save(); scheduleRender(); showToast('Contact delete ho gaya.','success',2000); return; }
     /* status btn */
@@ -842,7 +852,7 @@ document.getElementById('clearSelBtn').onclick=()=>{ selected.clear(); scheduleR
 document.getElementById('waSelectedBtn').onclick=()=>{ const ids=Array.from(selected); if(!ids.length){ showToast('Pehle customers select karein.','error'); return; } turboList=contacts.filter(c=>ids.includes(c.id)); turboIdx=0; document.getElementById('turboOverlay').classList.add('open'); document.getElementById('turboOverlay').dataset.mode='wa'; renderTurboCard(); };
 document.getElementById('turboBtn').onclick=()=>{ turboList=getFiltered(); if(!turboList.length){ showToast('Is filter me koi customer nahi hai.','error'); return; } turboIdx=0; document.getElementById('turboOverlay').classList.add('open'); document.getElementById('turboOverlay').dataset.mode='call'; renderTurboCard(); };
 document.getElementById('closeTurbo').onclick=()=>document.getElementById('turboOverlay').classList.remove('open');
-function renderTurboCard(){ if(turboIdx>=turboList.length){ document.getElementById('turboCardBody').innerHTML=`<p style="color:var(--muted);padding:1rem 0;">Sab ho gaya! 🎉</p>`; document.getElementById('turboCounter').textContent=turboList.length+' of '+turboList.length; return; } const c=turboList[turboIdx]; const num=digitsOnly(c.phone); const tmpl=templates[c.language]; const waMsg=tmpl?encodeURIComponent(tmpl.replace(/\{name\}/g,c.name)):''; document.getElementById('turboCounter').textContent=(turboIdx+1)+' of '+turboList.length; document.getElementById('turboCardBody').innerHTML=`<div class="name">${escHtml(c.name)}</div><div class="phone">${escHtml(c.phone)} · ${escHtml(c.state||'')}</div><div class="actions"><button class="a-call" onclick="openCallModal('${c.id}')">&#128222; Call</button><a class="a-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a><a class="a-sms" href="sms:${num}">&#9993; SMS</a></div><div class="status-row" style="justify-content:center;">${STATUSES.map(s=>`<button class="status-btn" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}</div><div class="turboNav"><button class="btn-ghost btn-block" id="turboSkip">Skip &#8594;</button></div>`; document.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{ c.status=b.dataset.tstatus; if(c.status==='later'&&!c.reminder) c.reminder=getTomorrow(); save(); turboIdx++; renderTurboCard(); scheduleRender(); }); document.getElementById('turboSkip').onclick=()=>{ turboIdx++; renderTurboCard(); }; }
+function renderTurboCard(){ if(turboIdx>=turboList.length){ document.getElementById('turboCardBody').innerHTML=`<p style="color:var(--muted);padding:1rem 0;">Sab ho gaya! 🎉</p>`; document.getElementById('turboCounter').textContent=turboList.length+' of '+turboList.length; return; } const c=turboList[turboIdx]; const num=digitsOnly(c.phone); const tmpl=templates[c.language]; const waMsg=tmpl?encodeURIComponent(tmpl.replace(/\{name\}/g,c.name)):''; document.getElementById('turboCounter').textContent=(turboIdx+1)+' of '+turboList.length; document.getElementById('turboCardBody').innerHTML=`<div class="name">${escHtml(c.name)}</div><div class="phone">${escHtml(c.phone)} · ${escHtml(c.state||'')}</div><div class="actions"><button class="a-call" onclick="openCallModal('${c.id}')">&#128222; Call</button><a class="a-wa" href="https://wa.me/${digitsOnly(c.phone)}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a><a class="a-sms" href="sms:${num}">&#9993; SMS</a></div><div class="status-row" style="justify-content:center;">${STATUSES.map(s=>`<button class="status-btn" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}</div><div class="turboNav"><button class="btn-ghost btn-block" id="turboSkip">Skip &#8594;</button></div>`; document.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{ c.status=b.dataset.tstatus; if(c.status==='later'&&!c.reminder) c.reminder=getTomorrow(); save(); turboIdx++; renderTurboCard(); scheduleRender(); }); document.getElementById('turboSkip').onclick=()=>{ turboIdx++; renderTurboCard(); }; }
 
 /* ── IMPORT ── */
 document.getElementById('importBtn').onclick=function(e){ e.preventDefault(); e.stopPropagation(); var inp=document.getElementById('csvInput'); inp.value=''; inp.click(); };
