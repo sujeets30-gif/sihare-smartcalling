@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CallFlow">
+<meta name="theme-color" content="#0a0e1a">
+<title>CallFlow CRM</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --panel:#11172b; --panel2:#161d36; --border:#23304f;
+    --text:#e7ecff; --muted:#8a93b3; --accent:#4f6df5; --accent2:#7b93ff;
+    --green:#2bb673; --green-bg:#0f2a22; --amber:#e2a83a; --amber-bg:#2a230f;
+    --red:#e25555; --red-bg:#2a1212; --teal:#2bb6a6; --teal-bg:#0f2a28;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; padding-bottom:3rem; -webkit-tap-highlight-color:transparent;}
+  .wrap{max-width:680px; margin:0 auto; padding:1.25rem; padding-top:calc(1.25rem + env(safe-area-inset-top)); padding-bottom:calc(3rem + env(safe-area-inset-bottom));}
+  @media (max-width:430px){
+    .wrap{padding-left:.85rem; padding-right:.85rem;}
+    .row{flex-direction:column; gap:8px;}
+    .meta-row{flex-direction:column;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .toolbar button{min-width:46%; font-size:11.5px; padding:10px 8px;}
+    .actions a, .actions button{font-size:12px; padding:11px 6px;}
+    .counterCard{flex-direction:row; align-items:center;}
+    .ring{width:62px; height:62px;}
+    .header h1{font-size:16px;}
+    input, select, textarea, button{font-size:16px;}
+    .status-btn{font-size:11px; padding:7px 9px;}
+    .bulkbar{flex-direction:column; align-items:stretch;}
+    .bulkbar select{width:100%;}
+  }
+  .header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:1.25rem;}
+  .hleft{display:flex; align-items:center; gap:12px;}
+  .logo{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;}
+  .header h1{font-size:18px; margin:0; font-weight:700;}
+  .header p{font-size:12px; color:var(--muted); margin:2px 0 0;}
+  .live{font-size:11px; color:var(--green); font-weight:700; display:flex; align-items:center; gap:4px;}
+  .dot{width:6px; height:6px; border-radius:50%; background:var(--green); display:inline-block;}
+
+  .counterCard{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:1rem; margin-bottom:1rem; display:flex; align-items:center; gap:1rem;}
+  .ring{width:74px; height:74px; border-radius:50%; border:5px solid var(--panel2); display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;}
+  .ring .n{font-size:15px; font-weight:700;}
+  .counterCard .mid{flex:1;}
+  .counterCard .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
+  .counterCard .setrow{display:flex; gap:6px; margin-top:6px;}
+  .counterCard .setrow input{width:70px; padding:6px 8px; font-size:13px;}
+  .counterCard .setrow button{padding:6px 12px; font-size:12px;}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:1.25rem;}
+  .stat{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 6px; text-align:center;}
+  .stat .n{font-size:18px; font-weight:700;}
+  .stat .l{font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
+
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:1rem; margin-bottom:1rem;}
+  .card h2{font-size:13px; font-weight:600; margin:0 0 4px; cursor:default;}
+  .card .sub{font-size:11.5px; color:var(--muted); margin:0 0 10px;}
+  .card.collapsible h2{cursor:pointer; display:flex; align-items:center; justify-content:space-between;}
+  .card.collapsible .chev{transition:transform .15s; font-size:11px; color:var(--muted);}
+  .card.collapsible.open .chev{transform:rotate(90deg);}
+  .collapseBody{display:none; margin-top:8px;}
+  .card.collapsible.open .collapseBody{display:block;}
+
+  input, select, textarea{width:100%; background:var(--panel2); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:10px 12px; font-size:14px; outline:none; font-family:inherit;}
+  input::placeholder, textarea::placeholder{color:var(--muted);}
+  input:focus, select:focus, textarea:focus{border-color:var(--accent);}
+  .row{display:flex; gap:8px; margin-bottom:8px;}
+  .row > *{flex:1; min-width:0;}
+  button{cursor:pointer; border:none; border-radius:8px; font-size:14px; font-weight:600; padding:10px 14px; font-family:inherit;}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; width:100%;}
+  .btn-ghost{background:var(--panel2); color:var(--text); border:1px solid var(--border);}
+  .btn-sm{padding:6px 10px; font-size:12px;}
+  .btn-block{width:100%; margin-top:6px;}
+
+  .toolbar{display:flex; gap:8px; margin-bottom:.75rem; flex-wrap:wrap;}
+  .toolbar button{flex:1; min-width:110px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12.5px;}
+
+  .bulkbar{display:flex; gap:8px; align-items:center; margin-bottom:.75rem; flex-wrap:wrap;}
+  .bulkbar select{flex:1; min-width:120px;}
+  .bulkbar label{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted); white-space:nowrap;}
+
+  .filters{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:1rem;}
+  .chip{background:var(--panel2); border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600;}
+  .chip.active{background:var(--accent); color:#fff; border-color:transparent;}
+  .chip.due.active{background:var(--amber); color:#2a230f;}
+
+  .turbo{background:linear-gradient(135deg,rgba(79,109,245,.14),rgba(123,147,255,.05)); border:1px solid var(--accent); border-radius:14px; padding:14px; margin-bottom:1rem; display:flex; align-items:center; gap:12px; cursor:pointer;}
+  .turbo .ic{width:38px; height:38px; border-radius:10px; background:var(--accent); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .turbo .t{font-weight:700; font-size:14px;}
+  .turbo .s{font-size:11.5px; color:var(--muted);}
+  .turbo .arrow{margin-left:auto; color:var(--accent2);}
+
+  .contact{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px;}
+  .c-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:8px;}
+  .c-left{display:flex; gap:10px; align-items:flex-start;}
+  .c-name{font-size:15px; font-weight:700;}
+  .c-phone{font-size:12px; color:var(--muted); margin-top:2px;}
+  .badge{font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap;}
+  .badge.pending{background:var(--amber-bg); color:var(--amber);}
+  .badge.done{background:var(--green-bg); color:var(--green);}
+  .badge.interested{background:var(--teal-bg); color:var(--teal);}
+  .badge.not_interested{background:var(--red-bg); color:var(--red);}
+  .badge.later{background:var(--panel2); color:var(--muted);}
+  .badge.no_answer{background:var(--panel2); color:var(--muted);}
+  .del{background:transparent; border:1px solid var(--border); color:var(--red); padding:6px 8px; border-radius:8px; font-size:11px;}
+
+  .meta-row{display:flex; gap:8px; margin-bottom:10px;}
+  .meta-row select{font-size:12.5px; padding:8px 10px;}
+
+  .actions{display:flex; gap:8px; margin-bottom:8px;}
+  .actions a, .actions button{flex:1; text-align:center; text-decoration:none; padding:9px; border-radius:8px; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:5px;}
+  .a-call,.a-wa{background:var(--green-bg); color:var(--green);}
+  .a-sms{background:rgba(79,109,245,.12); color:var(--accent2);}
+  .a-bank{background:var(--amber-bg); color:var(--amber); width:100%; margin-bottom:8px;}
+  .a-note{background:var(--panel2); color:var(--muted); width:100%; margin-bottom:8px; border:1px solid var(--border);}
+
+  .status-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
+  .status-btn{background:var(--panel2); border:1px solid var(--border); color:var(--muted); font-size:11px; padding:6px 10px; border-radius:7px; font-weight:600;}
+  .status-btn.active{background:var(--accent); color:#fff; border-color:transparent;}
+
+  .noteBox{display:none; margin-bottom:8px;}
+  .noteBox.open{display:block;}
+  .noteBox textarea{font-size:12.5px;}
+
+  .reminderRow{display:none; gap:8px; margin-bottom:8px;}
+  .reminderRow.open{display:flex;}
+  .reminderRow input{font-size:12.5px;}
+
+  .due-tag{font-size:10.5px; color:var(--amber); margin-top:4px;}
+
+  .bankItem, .tmplItem{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .bankItem .info{font-size:12px;}
+  .bankItem .info b{font-size:13px;}
+
+  .empty{text-align:center; color:var(--muted); font-size:13px; padding:3rem 1rem;}
+  #csvInput{display:none;}
+
+  .overlay{display:none; position:fixed; inset:0; background:rgba(5,7,15,.85); z-index:50; align-items:center; justify-content:center; padding:1rem;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:1.25rem; width:100%; max-width:420px; max-height:88vh; overflow:auto;}
+  .modal h3{margin:0 0 12px; font-size:15px;}
+  .modal .close{position:absolute;}
+  .modalHeader{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+  .modalHeader button{padding:4px 10px;}
+
+  .turboCount{font-size:12px; color:var(--muted); text-align:center; margin-bottom:10px;}
+  .turboCard{text-align:center;}
+  .turboCard .name{font-size:20px; font-weight:700; margin-bottom:2px;}
+  .turboCard .phone{font-size:13px; color:var(--muted); margin-bottom:14px;}
+  .turboNav{display:flex; gap:8px; margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="hleft">
+      <div class="logo">&#128222;</div>
+      <div>
+        <h1>CallFlow CRM</h1>
+        <p id="contactCount">0 contacts</p>
+      </div>
+    </div>
+    <div class="live"><span class="dot"></span>LIVE</div>
+  </div>
+
+  <div class="counterCard">
+    <div class="ring"><div class="n" id="todayCount">0 / 20</div></div>
+    <div class="mid">
+      <div class="lbl">Aaj ke calls</div>
+      <div class="setrow">
+        <input id="targetInput" type="number" value="20" min="1">
+        <button class="btn-ghost btn-sm" id="setTargetBtn">Set</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats" id="statsGrid"></div>
+
+  <div class="card">
+    <h2>Naya customer jodein</h2>
+    <div class="row">
+      <input id="newName" placeholder="Naam">
+      <input id="newPhone" placeholder="Mobile number">
+    </div>
+    <div class="row">
+      <select id="newState"></select>
+      <select id="newLang"></select>
+    </div>
+    <textarea id="newNote" placeholder="Is customer ke liye WhatsApp/SMS message (optional)" rows="2"></textarea>
+    <button class="btn-primary btn-block" id="addBtn">+ Add customer</button>
+  </div>
+
+  <div class="card collapsible" id="bankCard">
+    <h2 onclick="toggleCard('bankCard')">&#128179; Bank accounts / UPI (payment bhejne ke liye) <span class="chev">&#8250;</span></h2>
+    <p class="sub">Apne bank account / UPI add karein. Customer ko bhejte waqt chun sakte ho kaun sa bhejna hai.</p>
+    <div class="collapseBody">
+      <div id="bankList"></div>
+      <div class="row">
+        <input id="bankLabel" placeholder="Label (jaise: HDFC, GPay)">
+      </div>
+      <div class="row">
+        <input id="bankUpi" placeholder="UPI ID">
+        <input id="bankAcc" placeholder="Account number (optional)">
+      </div>
+      <input id="bankIfsc" placeholder="IFSC (optional)" style="margin-bottom:8px;">
+      <button class="btn-ghost btn-block" id="addBankBtn">+ Account add karein</button>
+    </div>
+  </div>
+
+  <div class="card collapsible" id="tmplCard">
+    <h2 onclick="toggleCard('tmplCard')">&#128221; Language message templates <span class="chev">&#8250;</span></h2>
+    <p class="sub">Bhasha chuno, message edit karo, phir Save dabao. {name} likhoge to customer ka naam apne aap aayega.</p>
+    <div class="collapseBody">
+      <select id="tmplLang" style="margin-bottom:8px;"></select>
+      <textarea id="tmplText" placeholder="Namaste {name}, ..." rows="3" style="margin-bottom:8px;"></textarea>
+      <button class="btn-ghost btn-block" id="saveTmplBtn">&#128190; Save this language</button>
+      <div id="tmplList" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn-ghost" id="importBtn">&#11014; Import CSV</button>
+    <input type="file" id="csvInput" accept=".csv">
+    <button class="btn-ghost" id="exportBtn">&#11015; Export CSV</button>
+    <button class="btn-ghost" id="clearBtn">&#128465; Clear all</button>
+  </div>
+
+  <div class="bulkbar">
+    <label><input type="checkbox" id="selectAllBox" style="width:auto;"> <span id="selCount">0 selected</span></label>
+    <select id="filterLang"></select>
+    <select id="filterState"></select>
+  </div>
+  <div class="bulkbar">
+    <button class="btn-ghost btn-sm" id="waSelectedBtn">&#128172; WhatsApp selected</button>
+    <button class="btn-ghost btn-sm" id="clearSelBtn">Clear selection</button>
+  </div>
+
+  <div class="turbo" id="turboBtn">
+    <div class="ic">&#9889;</div>
+    <div>
+      <div class="t">Turbo Calling</div>
+      <div class="s">Ek-ek customer, bina ruke</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+  </div>
+
+  <div class="filters" id="filterRow"></div>
+
+  <input id="searchBox" placeholder="&#128269; Naam ya number search..." style="margin-bottom:1rem;">
+
+  <div id="contactList"></div>
+  <p class="empty" id="emptyState">No contacts yet. Add one above or import a CSV.</p>
+
+</div>
+
+<div class="overlay" id="turboOverlay">
+  <div class="modal">
+    <div class="modalHeader">
+      <h3>Turbo Calling</h3>
+      <button class="btn-ghost btn-sm" id="closeTurbo">&#10005; Band</button>
+    </div>
+    <div class="turboCount" id="turboCounter">1 of 0</div>
+    <div class="turboCard" id="turboCardBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="bankPickOverlay">
+  <div class="modal">
+    <div class="modalHeader">
+      <h3>&#128179; Kaun sa account bhejna hai?</h3>
+      <button class="btn-ghost btn-sm" id="closeBankPick">&#10005;</button>
+    </div>
+    <div id="bankPickList"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
+<script>
+const LANGUAGES = [
+  ['hi','हिन्दी Hindi'],['en','English'],['bn','বাংলা Bengali'],['te','తెలుగు Telugu'],
+  ['mr','मराठी Marathi'],['ta','தமிழ் Tamil'],['ur','اردو Urdu'],['gu','ગુજરાતી Gujarati'],
+  ['kn','ಕನ್ನಡ Kannada'],['or','ଓଡ଼ିଆ Odia'],['pa','ਪੰਜਾਬੀ Punjabi'],['ml','മലയാളം Malayalam'],
+  ['as','অসমীয়া Assamese'],['mai','मैथिली Maithili'],['sa','संस्कृत Sanskrit'],['kok','कोंकणी Konkani'],
+  ['ne','नेपाली Nepali'],['mni','মৈতৈলোন Manipuri'],['sd','سنڌي Sindhi'],['doi','डोगरी Dogri'],
+  ['ks','کٲشُر Kashmiri'],['brx','बड़ो Bodo'],['sat','ᱥᱟᱱᱛᱟᱲᱤ Santali']
+];
+const STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana',
+  'Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur',
+  'Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
+  'Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'
+];
+const STATUSES = ['pending','done','interested','not_interested','later','no_answer'];
+const STATUS_LABEL = {pending:'Pending',done:'Ho gaya',interested:'Interested',not_interested:'Not interested',later:'Baad mein',no_answer:'Nahi utha'};
+
+let contacts = JSON.parse(localStorage.getItem('callflow-contacts') || '[]');
+let bankAccounts = JSON.parse(localStorage.getItem('callflow-banks') || '[]');
+let templates = JSON.parse(localStorage.getItem('callflow-templates') || '{}');
+let todayState = JSON.parse(localStorage.getItem('callflow-today') || '{"date":"","count":0,"target":20}');
+let activeFilter = 'all';
+let selected = new Set();
+let turboList = [];
+let turboIdx = 0;
+let bankPickContactId = null;
+
+const todayStr = () => new Date().toISOString().slice(0,10);
+if(todayState.date !== todayStr()){ todayState = {date:todayStr(), count:0, target:todayState.target||20}; saveToday(); }
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function digitsOnly(p){ return (p||'').replace(/\D/g,''); }
+function escapeHtml(str){ const d=document.createElement('div'); d.textContent = str==null?'':str; return d.innerHTML; }
+function save(){ localStorage.setItem('callflow-contacts', JSON.stringify(contacts)); }
+function saveBanks(){ localStorage.setItem('callflow-banks', JSON.stringify(bankAccounts)); }
+function saveTemplates(){ localStorage.setItem('callflow-templates', JSON.stringify(templates)); }
+function saveToday(){ localStorage.setItem('callflow-today', JSON.stringify(todayState)); }
+
+function langName(code){ const f = LANGUAGES.find(l=>l[0]===code); return f ? f[1] : code; }
+
+function populateSelect(el, options, withAllLabel){
+  let html = withAllLabel ? `<option value="">${withAllLabel}</option>` : '';
+  html += options.map(o=>Array.isArray(o) ? `<option value="${o[0]}">${o[1]}</option>` : `<option value="${o}">${o}</option>`).join('');
+  el.innerHTML = html;
+}
+
+function initSelects(){
+  populateSelect(document.getElementById('newState'), STATES, '🌐 Sabhi state');
+  populateSelect(document.getElementById('newLang'), LANGUAGES, '🌐 Sabhi bhasha');
+  populateSelect(document.getElementById('tmplLang'), LANGUAGES, null);
+  populateSelect(document.getElementById('filterLang'), LANGUAGES, '🌐 Sabhi bhasha');
+  populateSelect(document.getElementById('filterState'), STATES, '📍 Sabhi state');
+  document.getElementById('newState').value = '';
+  document.getElementById('newLang').value = 'hi';
+}
+
+function toggleCard(id){ document.getElementById(id).classList.toggle('open'); }
+
+function isDue(c){
+  if(c.status !== 'later' || !c.reminder) return false;
+  return c.reminder <= todayStr();
+}
+
+function renderTodayCounter(){
+  document.getElementById('todayCount').textContent = todayState.count + ' / ' + todayState.target;
+  document.getElementById('targetInput').value = todayState.target;
+}
+
+function renderStats(){
+  const total = contacts.length;
+  const done = contacts.filter(c=>c.status==='done').length;
+  const pending = contacts.filter(c=>c.status==='pending').length;
+  const interested = contacts.filter(c=>c.status==='interested').length;
+  document.getElementById('contactCount').textContent = total + ' contact' + (total===1?'':'s');
+  const data = [['Total',total],['Pending',pending],['Done',done],['Interested',interested]];
+  document.getElementById('statsGrid').innerHTML = data.map(([l,v])=>`<div class="stat"><div class="n">${v}</div><div class="l">${l}</div></div>`).join('');
+}
+
+function renderFilters(){
+  const opts = [['all','Sab'],['due','Due'],['pending','Pending'],['done','Ho gaya'],['later','Baad mein'],
+    ['no_answer','Nahi utha'],['interested','Interested'],['not_interested','Not interested']];
+  document.getElementById('filterRow').innerHTML = opts.map(([k,l])=>
+    `<button class="chip ${k==='due'?'due':''} ${activeFilter===k?'active':''}" data-f="${k}">${l}</button>`).join('');
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{ activeFilter=b.dataset.f; render(); });
+}
+
+function getFiltered(){
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const langF = document.getElementById('filterLang').value;
+  const stateF = document.getElementById('filterState').value;
+  return contacts.filter(c=>{
+    const matchesQ = !q || c.name.toLowerCase().includes(q) || c.phone.includes(q);
+    const matchesLang = !langF || c.language===langF;
+    const matchesState = !stateF || c.state===stateF;
+    let matchesF = true;
+    if(activeFilter==='due') matchesF = isDue(c);
+    else if(activeFilter!=='all') matchesF = c.status===activeFilter;
+    return matchesQ && matchesLang && matchesState && matchesF;
+  });
+}
+
+function bankPickerHtml(contactId){
+  if(bankAccounts.length===0) return '';
+  return '';
+}
+
+function renderList(){
+  const list = getFiltered();
+  document.getElementById('emptyState').style.display = contacts.length===0 ? 'block' : 'none';
+  document.getElementById('contactList').innerHTML = list.map(c=>{
+    const num = digitsOnly(c.phone);
+    const tmpl = templates[c.language];
+    const waMsg = tmpl ? encodeURIComponent(tmpl.replace(/\{name\}/g, c.name)) : (c.note ? encodeURIComponent(c.note) : '');
+    const smsMsg = waMsg;
+    return `<div class="contact">
+      <div class="c-top">
+        <div class="c-left">
+          <input type="checkbox" class="selBox" data-id="${c.id}" ${selected.has(c.id)?'checked':''} style="width:auto; margin-top:4px;">
+          <div>
+            <div class="c-name">${escapeHtml(c.name)}</div>
+            <div class="c-phone">${escapeHtml(c.phone)}</div>
+            ${isDue(c) ? `<div class="due-tag">⏰ Follow-up due</div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <span class="badge ${c.status}">${STATUS_LABEL[c.status]}</span>
+          <button class="del" data-del="${c.id}">Delete</button>
+        </div>
+      </div>
+      <div class="meta-row">
+        <select data-state="${c.id}">${STATES.map(s=>`<option value="${s}" ${c.state===s?'selected':''}>${s}</option>`).join('')}</select>
+        <select data-lang="${c.id}">${LANGUAGES.map(l=>`<option value="${l[0]}" ${c.language===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select>
+      </div>
+      <div class="actions">
+        <a class="a-call" data-call="${c.id}" href="tel:${num}">&#128222; Call</a>
+        <a class="a-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a>
+        <a class="a-sms" href="sms:${num}${smsMsg?'?body='+smsMsg:''}">&#9993; SMS</a>
+      </div>
+      ${bankAccounts.length ? `<button class="a-bank" data-bankpick="${c.id}">&#128179; Bank / UPI bhejo</button>` : ''}
+      <button class="a-note" data-notetoggle="${c.id}">&#128221; Note ${c.note ? '('+escapeHtml(c.note.slice(0,18))+(c.note.length>18?'...':'')+')' : 'add karein'}</button>
+      <div class="noteBox" id="noteBox-${c.id}">
+        <textarea data-noteinput="${c.id}" rows="2" placeholder="Note...">${escapeHtml(c.note||'')}</textarea>
+        <button class="btn-ghost btn-sm" data-notesave="${c.id}" style="margin-top:6px;">Save note</button>
+      </div>
+      <div class="status-row">
+        ${STATUSES.map(s=>`<button class="status-btn ${c.status===s?'active':''}" data-status="${c.id}|${s}">${STATUS_LABEL[s]}</button>`).join('')}
+      </div>
+      <div class="reminderRow ${c.status==='later'?'open':''}" id="reminder-${c.id}">
+        <input type="date" data-reminder="${c.id}" value="${c.reminder||''}">
+      </div>
+    </div>`;
+  }).join('');
+  wireListEvents();
+  document.getElementById('selCount').textContent = selected.size + ' selected';
+}
+
+function wireListEvents(){
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    if(!confirm('Delete this contact?')) return;
+    contacts = contacts.filter(c=>c.id!==b.dataset.del);
+    selected.delete(b.dataset.del);
+    save(); render();
+  });
+  document.querySelectorAll('[data-status]').forEach(b=>b.onclick=()=>{
+    const [id,s] = b.dataset.status.split('|');
+    const c = contacts.find(x=>x.id===id);
+    if(c) c.status = s;
+    save(); render();
+  });
+  document.querySelectorAll('[data-state]').forEach(s=>s.onchange=()=>{
+    const c = contacts.find(x=>x.id===s.dataset.state);
+    if(c) c.state = s.value;
+    save();
+  });
+  document.querySelectorAll('[data-lang]').forEach(s=>s.onchange=()=>{
+    const c = contacts.find(x=>x.id===s.dataset.lang);
+    if(c) c.language = s.value;
+    save(); render();
+  });
+  document.querySelectorAll('[data-call]').forEach(a=>a.addEventListener('click',()=>{
+    todayState.count++; saveToday(); renderTodayCounter();
+  }));
+  document.querySelectorAll('[data-notetoggle]').forEach(b=>b.onclick=()=>{
+    document.getElementById('noteBox-'+b.dataset.notetoggle).classList.toggle('open');
+  });
+  document.querySelectorAll('[data-notesave]').forEach(b=>b.onclick=()=>{
+    const ta = document.querySelector(`[data-noteinput="${b.dataset.notesave}"]`);
+    const c = contacts.find(x=>x.id===b.dataset.notesave);
+    if(c){ c.note = ta.value.trim(); save(); render(); }
+  });
+  document.querySelectorAll('[data-reminder]').forEach(inp=>inp.onchange=()=>{
+    const c = contacts.find(x=>x.id===inp.dataset.reminder);
+    if(c){ c.reminder = inp.value; save(); render(); }
+  });
+  document.querySelectorAll('.selBox').forEach(cb=>cb.onchange=()=>{
+    if(cb.checked) selected.add(cb.dataset.id); else selected.delete(cb.dataset.id);
+    document.getElementById('selCount').textContent = selected.size + ' selected';
+  });
+  document.querySelectorAll('[data-bankpick]').forEach(b=>b.onclick=()=>openBankPick(b.dataset.bankpick));
+}
+
+function openBankPick(contactId){
+  bankPickContactId = contactId;
+  document.getElementById('bankPickList').innerHTML = bankAccounts.map(a=>
+    `<div class="bankItem">
+      <div class="info"><b>${escapeHtml(a.label)}</b><br>${a.upi?('UPI: '+escapeHtml(a.upi)+'<br>'):''}${a.acc?('A/C: '+escapeHtml(a.acc)+(a.ifsc?(' / '+escapeHtml(a.ifsc)):''))   :''}</div>
+      <button class="btn-ghost btn-sm" data-sendbank="${a.id}">Bhejo</button>
+    </div>`).join('');
+  document.querySelectorAll('[data-sendbank]').forEach(b=>b.onclick=()=>{
+    const acc = bankAccounts.find(x=>x.id===b.dataset.sendbank);
+    const c = contacts.find(x=>x.id===bankPickContactId);
+    if(!acc || !c) return;
+    let msg = `Payment details:\n${acc.label}\n`;
+    if(acc.upi) msg += `UPI ID: ${acc.upi}\n`;
+    if(acc.acc) msg += `Account: ${acc.acc}\n`;
+    if(acc.ifsc) msg += `IFSC: ${acc.ifsc}\n`;
+    const num = digitsOnly(c.phone);
+    window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+    document.getElementById('bankPickOverlay').classList.remove('open');
+  });
+  document.getElementById('bankPickOverlay').classList.add('open');
+}
+document.getElementById('closeBankPick').onclick = ()=>document.getElementById('bankPickOverlay').classList.remove('open');
+
+function renderBankList(){
+  document.getElementById('bankList').innerHTML = bankAccounts.map(a=>
+    `<div class="bankItem">
+      <div class="info"><b>${escapeHtml(a.label)}</b><br>${a.upi?('UPI: '+escapeHtml(a.upi)+' '):''}${a.acc?('A/C: '+escapeHtml(a.acc)):''}</div>
+      <button class="del btn-sm" data-delbank="${a.id}">Delete</button>
+    </div>`).join('');
+  document.querySelectorAll('[data-delbank]').forEach(b=>b.onclick=()=>{
+    bankAccounts = bankAccounts.filter(x=>x.id!==b.dataset.delbank);
+    saveBanks(); renderBankList(); render();
+  });
+}
+
+document.getElementById('addBankBtn').onclick = ()=>{
+  const label = document.getElementById('bankLabel').value.trim();
+  const upi = document.getElementById('bankUpi').value.trim();
+  const acc = document.getElementById('bankAcc').value.trim();
+  const ifsc = document.getElementById('bankIfsc').value.trim();
+  if(!label || (!upi && !acc)){ alert('Label aur UPI ID ya account number daalein.'); return; }
+  bankAccounts.push({id:uid(), label, upi, acc, ifsc});
+  document.getElementById('bankLabel').value='';
+  document.getElementById('bankUpi').value='';
+  document.getElementById('bankAcc').value='';
+  document.getElementById('bankIfsc').value='';
+  saveBanks(); renderBankList(); render();
+};
+
+function renderTemplateList(){
+  const keys = Object.keys(templates);
+  document.getElementById('tmplList').innerHTML = keys.map(k=>
+    `<div class="tmplItem">
+      <div class="info"><b>${langName(k)}</b><br>${escapeHtml(templates[k].slice(0,40))}${templates[k].length>40?'...':''}</div>
+      <button class="del btn-sm" data-deltmpl="${k}">Delete</button>
+    </div>`).join('');
+  document.querySelectorAll('[data-deltmpl]').forEach(b=>b.onclick=()=>{
+    delete templates[b.dataset.deltmpl];
+    saveTemplates(); renderTemplateList(); render();
+  });
+}
+
+document.getElementById('tmplLang').onchange = ()=>{
+  document.getElementById('tmplText').value = templates[document.getElementById('tmplLang').value] || '';
+};
+document.getElementById('saveTmplBtn').onclick = ()=>{
+  const lang = document.getElementById('tmplLang').value;
+  const text = document.getElementById('tmplText').value.trim();
+  if(!text){ alert('Pehle message likhein.'); return; }
+  templates[lang] = text;
+  saveTemplates(); renderTemplateList(); render();
+  alert(langName(lang) + ' ke liye template save ho gaya.');
+};
+
+function render(){ renderTodayCounter(); renderStats(); renderFilters(); renderList(); }
+
+document.getElementById('addBtn').onclick = ()=>{
+  const name = document.getElementById('newName').value.trim();
+  const phone = document.getElementById('newPhone').value.trim();
+  const state = document.getElementById('newState').value;
+  const language = document.getElementById('newLang').value || 'hi';
+  const note = document.getElementById('newNote').value.trim();
+  if(!name || !phone){ alert('Naam aur mobile number daalein.'); return; }
+  contacts.push({id:uid(), name, phone, state, language, note, status:'pending', reminder:''});
+  document.getElementById('newName').value = '';
+  document.getElementById('newPhone').value = '';
+  document.getElementById('newNote').value = '';
+  save(); render();
+};
+
+document.getElementById('searchBox').oninput = render;
+document.getElementById('filterLang').onchange = render;
+document.getElementById('filterState').onchange = render;
+
+document.getElementById('setTargetBtn').onclick = ()=>{
+  const v = parseInt(document.getElementById('targetInput').value, 10);
+  if(v > 0){ todayState.target = v; saveToday(); renderTodayCounter(); }
+};
+
+document.getElementById('selectAllBox').onchange = (e)=>{
+  const list = getFiltered();
+  if(e.target.checked) list.forEach(c=>selected.add(c.id));
+  else list.forEach(c=>selected.delete(c.id));
+  render();
+};
+document.getElementById('clearSelBtn').onclick = ()=>{ selected.clear(); render(); };
+
+document.getElementById('waSelectedBtn').onclick = ()=>{
+  const ids = Array.from(selected);
+  if(ids.length===0){ alert('Pehle customers select karein.'); return; }
+  const list = contacts.filter(c=>ids.includes(c.id));
+  turboList = list;
+  turboIdx = 0;
+  document.getElementById('turboOverlay').classList.add('open');
+  document.getElementById('turboOverlay').dataset.mode = 'wa';
+  renderTurboCard();
+};
+
+document.getElementById('turboBtn').onclick = ()=>{
+  turboList = getFiltered();
+  if(turboList.length===0){ alert('Is filter me koi customer nahi hai.'); return; }
+  turboIdx = 0;
+  document.getElementById('turboOverlay').classList.add('open');
+  document.getElementById('turboOverlay').dataset.mode = 'call';
+  renderTurboCard();
+};
+document.getElementById('closeTurbo').onclick = ()=>document.getElementById('turboOverlay').classList.remove('open');
+
+function renderTurboCard(){
+  if(turboIdx >= turboList.length){
+    document.getElementById('turboCardBody').innerHTML = `<p style="color:var(--muted); padding:1rem 0;">Sab ho gaya! &#127881;</p>`;
+    document.getElementById('turboCounter').textContent = turboList.length + ' of ' + turboList.length;
+    return;
+  }
+  const c = turboList[turboIdx];
+  const num = digitsOnly(c.phone);
+  const mode = document.getElementById('turboOverlay').dataset.mode;
+  const tmpl = templates[c.language];
+  const waMsg = tmpl ? encodeURIComponent(tmpl.replace(/\{name\}/g, c.name)) : '';
+  document.getElementById('turboCounter').textContent = (turboIdx+1) + ' of ' + turboList.length;
+  document.getElementById('turboCardBody').innerHTML = `
+    <div class="name">${escapeHtml(c.name)}</div>
+    <div class="phone">${escapeHtml(c.phone)} &middot; ${escapeHtml(c.state||'')}</div>
+    <div class="actions">
+      <a class="a-call" id="turboCallLink" href="tel:${num}">&#128222; Call</a>
+      <a class="a-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a>
+      <a class="a-sms" href="sms:${num}">&#9993; SMS</a>
+    </div>
+    <div class="status-row" style="justify-content:center;">
+      ${STATUSES.map(s=>`<button class="status-btn" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}
+    </div>
+    <div class="turboNav">
+      <button class="btn-ghost btn-block" id="turboSkip">Skip &#8594;</button>
+    </div>
+  `;
+  document.getElementById('turboCallLink').addEventListener('click', ()=>{
+    todayState.count++; saveToday(); renderTodayCounter();
+  });
+  document.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{
+    c.status = b.dataset.tstatus;
+    save();
+    turboIdx++;
+    renderTurboCard();
+    render();
+  });
+  document.getElementById('turboSkip').onclick = ()=>{ turboIdx++; renderTurboCard(); };
+}
+
+document.getElementById('importBtn').onclick = ()=>document.getElementById('csvInput').click();
+document.getElementById('csvInput').onchange = (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  Papa.parse(file, {
+    header:true, skipEmptyLines:true,
+    complete: (res)=>{
+      let added = 0;
+      res.data.forEach(row=>{
+        const keys = Object.keys(row);
+        const nameKey = keys.find(k=>/name|naam/i.test(k));
+        const phoneKey = keys.find(k=>/phone|number|mobile/i.test(k));
+        const stateKey = keys.find(k=>/state/i.test(k));
+        const name = nameKey ? row[nameKey] : Object.values(row)[0];
+        const phone = phoneKey ? row[phoneKey] : Object.values(row)[1];
+        const state = stateKey ? row[stateKey] : '';
+        if(name && phone){
+          contacts.push({id:uid(), name:String(name).trim(), phone:String(phone).trim(), state:state?String(state).trim():'', language:'hi', note:'', status:'pending', reminder:''});
+          added++;
+        }
+      });
+      save(); render();
+      alert(added + ' contacts imported.');
+      e.target.value = '';
+    }
+  });
+};
+
+document.getElementById('exportBtn').onclick = ()=>{
+  if(contacts.length===0){ alert('No contacts to export.'); return; }
+  const csv = Papa.unparse(contacts.map(c=>({Name:c.name, Phone:c.phone, State:c.state||'', Language:langName(c.language), Status:STATUS_LABEL[c.status], Note:c.note||''})));
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'contacts.csv'; a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById('clearBtn').onclick = ()=>{
+  if(contacts.length===0) return;
+  if(!confirm('Delete all contacts? This cannot be undone.')) return;
+  contacts = []; selected.clear();
+  save(); render();
+};
+
+initSelects();
+renderBankList();
+renderTemplateList();
+document.getElementById('tmplText').value = templates[document.getElementById('tmplLang').value] || '';
+render();
+</script>
+</body>
+</html>
