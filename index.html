@@ -232,10 +232,39 @@ button:active{transform:scale(.97);}
 .confirm-actions{display:flex;gap:10px;}
 .confirm-actions button{flex:1;}
 
-/* TURBO MODAL */
-.turbo-count{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
-.turbo-cname{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px;}
-.turbo-cphone{font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px;}
+/* TURBO — FULLSCREEN CALLING MODE */
+.turbo-screen{position:fixed;inset:0;z-index:700;background:radial-gradient(circle at 50% -10%,#132436 0%,#0d1117 55%);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .32s cubic-bezier(.16,1,.3,1);opacity:0;pointer-events:none;}
+.turbo-screen.open{transform:translateX(0);opacity:1;pointer-events:all;}
+.turbo-top{display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,10px) + 12px) 16px 10px;flex-shrink:0;}
+.turbo-close-btn{width:36px;height:36px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);color:var(--text);font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.turbo-progress-wrap{flex:1;}
+.turbo-progress-label{font-size:11px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;text-align:center;}
+.turbo-progress-bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;}
+.turbo-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .3s ease;}
+.turbo-spacer{width:36px;flex-shrink:0;}
+.turbo-body{flex:1;overflow-y:auto;padding:6px 20px calc(env(safe-area-inset-bottom,16px) + 26px);display:flex;flex-direction:column;max-width:480px;margin:0 auto;width:100%;}
+.turbo-card-anim{animation:turboIn .28s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;flex:1;}
+@keyframes turboIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.turbo-avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;margin:16px auto 16px;box-shadow:0 10px 28px rgba(31,111,235,.4);flex-shrink:0;}
+.turbo-cname{font-size:23px;font-weight:800;text-align:center;}
+.turbo-cphone{font-size:14.5px;color:var(--muted);text-align:center;margin-top:4px;font-weight:600;}
+.turbo-ctags{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.turbo-tag{font-size:11px;font-weight:700;background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:4px 11px;border-radius:999px;}
+.turbo-due{margin:12px auto 0;width:fit-content;}
+.turbo-timer{font-size:32px;font-weight:800;text-align:center;color:var(--green2);font-variant-numeric:tabular-nums;letter-spacing:.04em;margin:14px 0 0;display:none;}
+.turbo-timer.show{display:block;}
+.turbo-call-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;border-radius:16px;font-size:17px;font-weight:800;margin-top:20px;text-decoration:none;}
+.turbo-secondary-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.turbo-secondary-row a{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:13px;font-size:13.5px;font-weight:700;text-decoration:none;}
+.turbo-status-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin:24px 0 10px;}
+.turbo-status-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.turbo-status-grid .s-chip{padding:14px 6px;font-size:12.5px;text-align:center;border-radius:12px;}
+.turbo-skip-btn{width:100%;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:13px;padding:14px;font-size:13.5px;font-weight:700;margin-top:20px;}
+.turbo-done-state{text-align:center;padding:70px 20px;margin:auto;}
+.turbo-done-state .tde{font-size:56px;margin-bottom:16px;}
+.turbo-done-state h4{font-size:19px;font-weight:800;margin-bottom:6px;}
+.turbo-done-state p{font-size:13.5px;color:var(--muted);}
+.turbo-done-state .btn-primary{max-width:260px;margin:24px auto 0;}
 
 /* INFO MODAL */
 .info-body{font-size:13.5px;color:var(--muted);line-height:1.7;white-space:pre-line;}
@@ -446,17 +475,17 @@ button:active{transform:scale(.97);}
   </div>
 </div>
 
-<!-- TURBO MODAL -->
-<div class="overlay" id="turboOverlay">
-  <div class="modal">
-    <div class="modal-drag"></div>
-    <div class="modal-header">
-      <h3>⚡ Turbo Calling</h3>
-      <button class="btn-ghost btn-sm" id="closeTurbo">✕</button>
+<!-- TURBO — FULLSCREEN CALLING MODE -->
+<div class="turbo-screen" id="turboOverlay">
+  <div class="turbo-top">
+    <button class="turbo-close-btn" id="closeTurbo" aria-label="Close">✕</button>
+    <div class="turbo-progress-wrap">
+      <div class="turbo-progress-label" id="turboCounter">0 / 0</div>
+      <div class="turbo-progress-bar"><div class="turbo-progress-fill" id="turboProgressFill"></div></div>
     </div>
-    <div class="turbo-count" id="turboCounter">1 of 0</div>
-    <div id="turboCardBody"></div>
+    <div class="turbo-spacer"></div>
   </div>
+  <div class="turbo-body" id="turboCardBody"></div>
 </div>
 
 <!-- BANK PICK MODAL -->
@@ -849,10 +878,77 @@ document.getElementById('selectAllBox').onchange=e=>{ getFiltered().forEach(c=>e
 document.getElementById('clearSelBtn').onclick=()=>{ selected.clear(); scheduleRender(); };
 
 /* ── TURBO ── */
-document.getElementById('waSelectedBtn').onclick=()=>{ const ids=Array.from(selected); if(!ids.length){ showToast('Pehle customers select karein.','error'); return; } turboList=contacts.filter(c=>ids.includes(c.id)); turboIdx=0; document.getElementById('turboOverlay').classList.add('open'); document.getElementById('turboOverlay').dataset.mode='wa'; renderTurboCard(); };
-document.getElementById('turboBtn').onclick=()=>{ turboList=getFiltered(); if(!turboList.length){ showToast('Is filter me koi customer nahi hai.','error'); return; } turboIdx=0; document.getElementById('turboOverlay').classList.add('open'); document.getElementById('turboOverlay').dataset.mode='call'; renderTurboCard(); };
-document.getElementById('closeTurbo').onclick=()=>document.getElementById('turboOverlay').classList.remove('open');
-function renderTurboCard(){ if(turboIdx>=turboList.length){ document.getElementById('turboCardBody').innerHTML=`<p style="color:var(--muted);padding:1rem 0;">Sab ho gaya! 🎉</p>`; document.getElementById('turboCounter').textContent=turboList.length+' of '+turboList.length; return; } const c=turboList[turboIdx]; const num=digitsOnly(c.phone); const tmpl=templates[c.language]; const waMsg=tmpl?encodeURIComponent(tmpl.replace(/\{name\}/g,c.name)):''; document.getElementById('turboCounter').textContent=(turboIdx+1)+' of '+turboList.length; document.getElementById('turboCardBody').innerHTML=`<div class="name">${escHtml(c.name)}</div><div class="phone">${escHtml(c.phone)} · ${escHtml(c.state||'')}</div><div class="actions"><button class="a-call" onclick="openCallModal('${c.id}')">&#128222; Call</button><a class="a-wa" href="https://wa.me/${digitsOnly(c.phone)}${waMsg?'?text='+waMsg:''}" target="_blank">&#128172; WA</a><a class="a-sms" href="sms:${num}">&#9993; SMS</a></div><div class="status-row" style="justify-content:center;">${STATUSES.map(s=>`<button class="status-btn" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}</div><div class="turboNav"><button class="btn-ghost btn-block" id="turboSkip">Skip &#8594;</button></div>`; document.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{ c.status=b.dataset.tstatus; if(c.status==='later'&&!c.reminder) c.reminder=getTomorrow(); save(); turboIdx++; renderTurboCard(); scheduleRender(); }); document.getElementById('turboSkip').onclick=()=>{ turboIdx++; renderTurboCard(); }; }
+let turboCallSeconds=0, turboCallInterval=null, turboSessionCount=0;
+function stopTurboTimer(){ if(turboCallInterval){ clearInterval(turboCallInterval); turboCallInterval=null; } turboCallSeconds=0; }
+function turboInitials(name){ const parts=String(name||'').trim().split(/\s+/).filter(Boolean); if(!parts.length) return '?'; return (parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase(); }
+function updateTurboProgress(){ const total=turboList.length; const shown=total?Math.min(turboIdx+1,total):0; document.getElementById('turboCounter').textContent=shown+' / '+total; const pct=total?(Math.min(turboIdx,total)/total)*100:0; const fill=document.getElementById('turboProgressFill'); if(fill) fill.style.width=pct+'%'; }
+
+document.getElementById('waSelectedBtn').onclick=()=>{ const ids=Array.from(selected); if(!ids.length){ showToast('Pehle customers select karein.','error'); return; } turboList=contacts.filter(c=>ids.includes(c.id)); turboIdx=0; turboSessionCount=0; const ov=document.getElementById('turboOverlay'); ov.dataset.mode='wa'; ov.classList.add('open'); renderTurboCard(); };
+document.getElementById('turboBtn').onclick=()=>{ turboList=getFiltered(); if(!turboList.length){ showToast('Is filter me koi customer nahi hai.','error'); return; } turboIdx=0; turboSessionCount=0; const ov=document.getElementById('turboOverlay'); ov.dataset.mode='call'; ov.classList.add('open'); renderTurboCard(); };
+document.getElementById('closeTurbo').onclick=()=>{ stopTurboTimer(); document.getElementById('turboOverlay').classList.remove('open'); };
+document.getElementById('turboOverlay').addEventListener('click',e=>{ if(e.target.id==='turboFinishBtn') document.getElementById('closeTurbo').click(); });
+
+function renderTurboCard(){
+  stopTurboTimer();
+  updateTurboProgress();
+  const body=document.getElementById('turboCardBody');
+  const mode=document.getElementById('turboOverlay').dataset.mode||'call';
+
+  if(turboIdx>=turboList.length){
+    body.innerHTML=`<div class="turbo-done-state"><div class="tde">🎉</div><h4>Sab ho gaya!</h4><p>${turboSessionCount} contact${turboSessionCount===1?'':'s'} is session me process hue.</p><button class="btn-primary" id="turboFinishBtn">Band karo</button></div>`;
+    return;
+  }
+
+  const c=turboList[turboIdx];
+  const num=digitsOnly(c.phone);
+  const tmpl=templates[c.language];
+  const waMsg=tmpl?encodeURIComponent(tmpl.replace(/\{name\}/g,c.name)):(c.note?encodeURIComponent(c.note):'');
+  const stateTag=c.state?`<span class="turbo-tag">📍 ${escHtml(c.state)}</span>`:'';
+  const langTag=`<span class="turbo-tag">🌐 ${escHtml(langName(c.language))}</span>`;
+  const dueTag=isDue(c)?`<div class="due-tag turbo-due">⏰ Follow-up due</div>`:'';
+  const callBtn=`<a class="btn-call turbo-call-btn" id="turboDialBtn" href="tel:${rawDigits(c.phone)}">📞 Call Karo</a>`;
+  const waSmsRow=`<div class="turbo-secondary-row"><a class="btn-wa" href="https://wa.me/${num}${waMsg?'?text='+waMsg:''}" target="_blank" rel="noopener">💬 WhatsApp</a><a class="btn-sms" href="sms:${rawDigits(c.phone)}${waMsg?'?body='+waMsg:''}">✉ SMS</a></div>`;
+  const actionBlock = mode==='wa' ? (waSmsRow+callBtn) : (callBtn+waSmsRow);
+
+  body.innerHTML=`<div class="turbo-card-anim">
+    <div class="turbo-avatar">${turboInitials(c.name)}</div>
+    <div class="turbo-cname">${escHtml(c.name)}</div>
+    <div class="turbo-cphone">${escHtml(c.phone)}</div>
+    <div class="turbo-ctags">${stateTag}${langTag}</div>
+    ${dueTag}
+    <div class="turbo-timer" id="turboTimer">00:00</div>
+    ${actionBlock}
+    <div class="turbo-status-label">Result kya raha?</div>
+    <div class="turbo-status-grid">${STATUSES.map(s=>`<button class="s-chip" data-tstatus="${s}">${STATUS_LABEL[s]}</button>`).join('')}</div>
+    <button class="turbo-skip-btn" id="turboSkip">Skip &#8594; Agla customer</button>
+  </div>`;
+
+  const dialBtn=document.getElementById('turboDialBtn');
+  if(dialBtn){
+    dialBtn.onclick=()=>{
+      const timerEl=document.getElementById('turboTimer');
+      timerEl.classList.add('show');
+      const start=Date.now();
+      turboCallInterval=setInterval(()=>{ turboCallSeconds=Math.floor((Date.now()-start)/1000); timerEl.textContent=fmtTime(turboCallSeconds); },1000);
+      todayState.count++; saveToday(); renderTodayCounter();
+    };
+  }
+
+  body.querySelectorAll('[data-tstatus]').forEach(b=>b.onclick=()=>{
+    const s=b.dataset.tstatus;
+    c.status=s;
+    if(s==='later' && !c.reminder) c.reminder=getTomorrow();
+    save();
+    callHistory.unshift({ id:uid(), contactId:c.id, name:c.name, phone:c.phone, status:s, duration:turboCallSeconds, note:c.note||'', ts:new Date().toISOString() });
+    if(callHistory.length>200) callHistory=callHistory.slice(0,200);
+    saveHistory(); renderHistory(); renderStats();
+    turboSessionCount++;
+    turboIdx++;
+    renderTurboCard();
+    scheduleRender();
+  });
+  document.getElementById('turboSkip').onclick=()=>{ turboIdx++; renderTurboCard(); };
+}
 
 /* ── IMPORT ── */
 document.getElementById('importBtn').onclick=function(e){ e.preventDefault(); e.stopPropagation(); var inp=document.getElementById('csvInput'); inp.value=''; inp.click(); };
